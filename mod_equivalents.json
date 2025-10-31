@@ -1,0 +1,68 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Mod Equivalents & Replacements",
+  "description": "Maps mods to their equivalents/forks across different loaders and versions",
+  "equivalents": {
+    "performance_optimization": {
+      "fabric": {
+        "core_mods": [
+          {"slug": "sodium", "name": "Sodium", "layer": "render"},
+          {"slug": "lithium", "name": "Lithium", "layer": "tick/ai"},
+          {"slug": "phosphor", "name": "Phosphor", "layer": "lighting"},
+          {"slug": "ferritecore", "name": "FerriteCore", "layer": "memory"},
+          {"slug": "starlight", "name": "Starlight", "layer": "lighting"}
+        ]
+      },
+      "neoforge": {
+        "1.21.1": [
+          {"slug": "sodium", "name": "Sodium", "layer": "render", "replaces": []},
+          {"slug": "lithium", "name": "Lithium", "layer": "tick/ai", "replaces": []},
+          {"slug": "modernfix", "name": "ModernFix", "layer": "memory", "replaces": []},
+          {"slug": "noisium", "name": "Noisium", "layer": "worldgen", "replaces": []},
+          {"slug": "entityculling", "name": "Entity Culling", "layer": "culling", "replaces": []},
+          {"slug": "cull-less-leaves", "name": "Cull Less Leaves", "layer": "culling", "replaces": []},
+          {"slug": "dynamic-fps", "name": "Dynamic FPS", "layer": "fps", "replaces": []},
+          {"slug": "iris", "name": "Iris Shaders", "layer": "shaders", "replaces": []}
+        ],
+        "1.20.1": [
+          {"slug": "embeddium", "name": "Embeddium", "layer": "render", "replaces": ["sodium"]},
+          {"slug": "rubidium", "name": "Rubidium", "layer": "render", "replaces": ["sodium"]},
+          {"slug": "modernfix", "name": "ModernFix", "layer": "tick/memory", "replaces": ["lithium"]},
+          {"slug": "ferritecore", "name": "FerriteCore", "layer": "memory", "replaces": []},
+          {"slug": "entity-culling", "name": "Entity Culling", "layer": "culling", "replaces": []},
+          {"slug": "roadrunner", "name": "Roadrunner", "layer": "memory", "replaces": []},
+          {"slug": "oculus", "name": "Oculus", "layer": "shaders", "replaces": ["iris"]}
+        ]
+      },
+      "forge": {
+        "1.20.1": [
+          {"slug": "rubidium", "name": "Rubidium", "layer": "render", "replaces": ["sodium"]},
+          {"slug": "modernfix", "name": "ModernFix", "layer": "tick/memory", "replaces": ["lithium"]},
+          {"slug": "ferritecore", "name": "FerriteCore", "layer": "memory", "replaces": []},
+          {"slug": "entity-culling", "name": "Entity Culling", "layer": "culling", "replaces": []},
+          {"slug": "roadrunner", "name": "Roadrunner", "layer": "memory", "replaces": []},
+          {"slug": "oculus", "name": "Oculus", "layer": "shaders", "replaces": ["iris"]}
+        ]
+      }
+    },
+    "optimization_layers": {
+      "render": ["Render optimization (Sodium/Embeddium family)"],
+      "tick/ai": ["Tick rate & AI optimization (Lithium/ModernFix)"],
+      "lighting": ["Lighting optimization (Starlight/Phosphor)"],
+      "memory": ["Memory optimization (FerriteCore/ModernFix)"],
+      "culling": ["Entity/block culling (Entity Culling, Cull Less Leaves)"],
+      "worldgen": ["World generation optimization (Noisium, C2ME)"],
+      "fps": ["FPS optimization (Dynamic FPS)"],
+      "shaders": ["Shader support (Iris/Oculus)"],
+      "io": ["I/O optimization (Smooth Boot, FastSuite)"]
+    }
+  },
+  "search_hints": {
+    "performance": {
+      "fabric_keywords": ["sodium", "lithium", "phosphor", "starlight", "ferritecore"],
+      "neoforge_keywords": ["sodium", "lithium", "modernfix", "noisium", "iris", "entityculling", "dynamic-fps"],
+      "forge_keywords": ["rubidium", "modernfix", "roadrunner", "oculus", "ferritecore"],
+      "generic_keywords": ["optimization", "performance", "fps", "memory", "culling"]
+    }
+  }
+}

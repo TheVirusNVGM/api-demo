@@ -1,0 +1,74 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Fabric Compatibility Configuration",
+  "description": "Defines compatibility fixes required for different mod loaders and Minecraft versions",
+  "compatibility_rules": [
+    {
+      "name": "NeoForge 1.21.1 → Fabric Compatibility",
+      "enabled": true,
+      "conditions": {
+        "mod_loader": "neoforge",
+        "mc_version": "1.21.1"
+      },
+      "required_mods": [
+        {
+          "source_id": "u58R1TMW",
+          "name": "Sinytra Connector",
+          "reason": "Allows Fabric mods to run on NeoForge",
+          "priority": 1
+        },
+        {
+          "source_id": "Aqlf1Shp",
+          "name": "Forgified Fabric API",
+          "reason": "Fabric API implementation for NeoForge",
+          "priority": 2
+        },
+        {
+          "source_id": "FYpiwiBR",
+          "name": "Connector Extras",
+          "reason": "Additional compatibility layer for complex Fabric mods",
+          "priority": 3
+        }
+      ]
+    },
+    {
+      "name": "Forge 1.20.1 → Fabric Compatibility",
+      "enabled": true,
+      "conditions": {
+        "mod_loader": "forge",
+        "mc_version": "1.20.1"
+      },
+      "required_mods": [
+        {
+          "source_id": "u58R1TMW",
+          "name": "Sinytra Connector",
+          "reason": "Allows Fabric mods to run on Forge",
+          "priority": 1
+        },
+        {
+          "source_id": "Aqlf1Shp",
+          "name": "Forgified Fabric API",
+          "reason": "Fabric API implementation for Forge",
+          "priority": 2
+        },
+        {
+          "source_id": "FYpiwiBR",
+          "name": "Connector Extras",
+          "reason": "Additional compatibility layer for complex Fabric mods",
+          "priority": 3
+        }
+      ]
+    }
+  ],
+  "auto_enable_triggers": {
+    "description": "Mods that trigger automatic Fabric Compat mode",
+    "connector_mods": ["u58R1TMW", "Aqlf1Shp", "FYpiwiBR"]
+  },
+  "category_config": {
+    "name": "Fabric Compatibility",
+    "color_primary": "#ff9500",
+    "color_secondary": "#000000",
+    "description": "Essential mods for running Fabric mods on Forge/NeoForge",
+    "priority": 999
+  }
+}

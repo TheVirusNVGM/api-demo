@@ -3,3 +3,7 @@ flask-cors>=4.0.0
 requests>=2.31.0
 sentence-transformers>=2.0.0
 numpy>=1.20.0
+python-dotenv>=1.0.0
+supabase>=2.0.0
+pyjwt>=2.8.0
+waitress>=2.1.2  # Production WSGI server (optional, for production deployment)

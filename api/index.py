@@ -25,6 +25,7 @@ from datetime import datetime, UTC
 import sys
 import uuid
 import time
+import requests
 
 sys.path.insert(0, os.path.dirname(__file__))
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
@@ -45,6 +46,7 @@ from ai_sort_feedback import submit_sort_feedback
 from config import DEEPSEEK_API_KEY, SUPABASE_URL, SUPABASE_KEY, CONNECTOR_MODS, BOARD_LAYOUT, CATEGORY_COLORS
 from auth import require_subscription
 from request_logger import get_request_logger
+from rate_limiter import get_rate_limiter
 
 app = Flask(__name__)
 CORS(app)  # Инициализируем CORS СРАЗУ после создания app
@@ -91,6 +93,122 @@ def health():
         'service': 'ASTRAL AI API',
         'version': '1.0.0'
     })
+
+
+@app.route('/api/ai/usage', methods=['GET'])
+def api_ai_usage():
+    """
+    Возвращает информацию о лимитах и использовании AI для пользователя
+    Требует JWT авторизации
+    """
+    try:
+        from auth import verify_supabase_token
+        from rate_limiter import TIER_LIMITS
+        from datetime import date, datetime, timezone
+        import calendar
+        
+        # 1. Извлекаем токен из заголовка
+        auth_header = request.headers.get('Authorization', '')
+        if not auth_header.startswith('Bearer '):
+            return jsonify({
+                'error': 'Unauthorized',
+                'message': 'Authentication token required'
+            }), 401
+        
+        token = auth_header.replace('Bearer ', '').strip()
+        if not token:
+            return jsonify({
+                'error': 'Unauthorized',
+                'message': 'Invalid token format'
+            }), 401
+        
+        # 2. Проверяем JWT токен
+        user_data = verify_supabase_token(token)
+        if not user_data:
+            return jsonify({
+                'error': 'Unauthorized',
+                'message': 'Invalid or expired token'
+            }), 401
+        
+        user_id = user_data.get('id') or user_data.get('sub') or user_data.get('user_id')
+        if not user_id:
+            return jsonify({
+                'error': 'Unauthorized',
+                'message': 'Token missing user ID'
+            }), 401
+        
+        # 3. Получаем данные пользователя из БД
+        headers = {
+            'apikey': SUPABASE_KEY,
+            'Authorization': f'Bearer {SUPABASE_KEY}',
+            'Content-Type': 'application/json'
+        }
+        
+        response = requests.get(
+            f'{SUPABASE_URL}/rest/v1/users',
+            params={
+                'id': f'eq.{user_id}',
+                'select': 'subscription_tier,daily_requests_used,monthly_requests_used,last_request_date'
+            },
+            headers=headers,
+            timeout=5
+        )
+        
+        if response.status_code != 200 or not response.json():
+            return jsonify({
+                'error': 'User not found',
+                'message': 'User data not available'
+            }), 404
+        
+        user_info = response.json()[0]
+        subscription_tier = user_info.get('subscription_tier', 'free')
+        daily_used = user_info.get('daily_requests_used', 0) or 0
+        monthly_used = user_info.get('monthly_requests_used', 0) or 0
+        last_request_date = user_info.get('last_request_date')
+        
+        # 4. Получаем лимиты для тарифа
+        limits = TIER_LIMITS.get(subscription_tier, TIER_LIMITS['free'])
+        daily_limit = limits['daily_requests']
+        
+        # 5. Проверяем нужен ли сброс счётчиков
+        today = date.today()
+        should_reset = False
+        
+        if last_request_date:
+            try:
+                last_date = datetime.fromisoformat(last_request_date).date()
+                if last_date < today:
+                    should_reset = True
+                    daily_used = 0
+            except:
+                pass
+        
+        # 6. Вычисляем время сброса (полночь следующего дня UTC)
+        from datetime import timedelta
+        tomorrow = today + timedelta(days=1)
+        reset_time = datetime.combine(tomorrow, datetime.min.time(), tzinfo=timezone.utc)
+        
+        # 7. Формируем ответ
+        unlimited = (daily_limit == -1)
+        
+        return jsonify({
+            'subscription_tier': subscription_tier,
+            'daily_limit': daily_limit if daily_limit != -1 else 999999,
+            'used_today': daily_used,
+            'remaining': (daily_limit - daily_used) if daily_limit != -1 else 999999,
+            'reset_at': reset_time.isoformat(),
+            'unlimited': unlimited
+        })
+    
+    except Exception as e:
+        print(f"❌ [Usage API] Error: {e}")
+        import traceback
+        traceback.print_exc()
+        
+        return jsonify({
+            'error': 'Internal server error',
+            'message': str(e)
+        }), 500
 
 
 @app.route('/api/ai/organize', methods=['POST'])
@@ -257,6 +375,21 @@ def api_build_board_state():
         print(f"   Current mods: {len(current_mods)}")
         print(f"   Version: {mc_version}, Loader: {mod_loader}, Max: {max_mods}")
         print(f"   Fabric Compat: {'ENABLED' if fabric_compat_mode else 'DISABLED'}")
+        
+        # Rate limiting check
+        rate_limiter = get_rate_limiter(SUPABASE_URL, SUPABASE_KEY)
+        allowed, error_msg = rate_limiter.check_limit(
+            user_id=g.user_id,
+            subscription_tier=g.subscription_tier,
+            max_mods=max_mods
+        )
+        
+        if not allowed:
+            print(f"⛔ [Rate Limit] {g.user_id} blocked: {error_msg}")
+            return jsonify({
+                'error': 'Rate limit exceeded',
+                'message': error_msg
+            }), 429
         
         # Проверяем версию API
         use_v3 = data.get('use_v3_architecture', True)
@@ -772,6 +905,13 @@ def api_build_board_state():
         
         print(f"[OK] Generated board_state.json with {len(board_state['mods'])} mods and {len(board_state['categories'])} categories")
         
+        # Increment usage counter
+        try:
+            total_tokens = result.get('_pipeline', {}).get('total_tokens', 0) if '_pipeline' in result else 0
+            rate_limiter.increment_usage(g.user_id, tokens_used=total_tokens)
+        except Exception as e:
+            print(f"⚠️  Failed to increment usage: {e}")
+        
         # Save request log to file
         try:
             import io
@@ -779,13 +919,28 @@ def api_build_board_state():
             # Логируем только если есть build_id
             if build_id:
                 logger = get_request_logger()
-                # Здесь мы не можем захватить весь stdout, но можем сохранить summary
+                
+                # Формируем детальный лог
                 log_content = f"Prompt: {prompt}\n"
                 log_content += f"Version: {mc_version}, Loader: {mod_loader}\n"
                 log_content += f"Total mods: {len(board_state['mods'])}\n"
                 log_content += f"Categories: {len(board_state['categories'])}\n"
+                log_content += f"Architecture: {result.get('_architecture', 'unknown')}\n"
+                log_content += f"Request type: {result.get('_request_type', 'unknown')}\n"
                 log_content += f"Build time: {total_time:.2f}s\n\n"
+                
+                # Архитектура - категории и моды
                 log_content += "="*80 + "\n"
+                log_content += "MODPACK ARCHITECTURE\n"
+                log_content += "="*80 + "\n"
+                for cat in board_state['categories']:
+                    category_mods = [m for m in board_state['mods'] if m.get('category_id') == cat['id']]
+                    log_content += f"\n📁 {cat['title']} ({len(category_mods)} mods):\n"
+                    for mod in category_mods:
+                        log_content += f"   • {mod['title']} ({mod['slug']})\n"
+                
+                # Timing summary
+                log_content += "\n" + "="*80 + "\n"
                 log_content += "TIMING SUMMARY\n"
                 log_content += "="*80 + "\n"
                 for stage_name, duration in sorted_stages:
@@ -1358,9 +1513,10 @@ else:
     except:
         pass
     print(f"\nEndpoints:")
+    print(f"  GET  /api/ai/usage       - Get AI usage limits and stats (protected)")
     print(f"  POST /api/ai/build       - Build modpack from prompt")
     print(f"  POST /api/ai/build-board - Build modpack as board_state.json (protected)")
-    print(f"  POST /api/ai/auto-sort  - Auto-sort mods into categories (protected)")
+    print(f"  POST /api/ai/auto-sort   - Auto-sort mods into categories (protected)")
     print(f"  POST /api/get-mod-tags             - Get custom tags for mods")
     print(f"  POST /api/feedback                 - Submit mod incompatibility feedback")
     print(f"  POST /api/feedback/categorization  - Submit categorization feedback")
