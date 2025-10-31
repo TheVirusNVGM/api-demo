@@ -1,30 +1,30 @@
 """
 ASTRAL AI API Server
-Production-ready AI modpack builder API
+Локальный API для тестирования AI функций
 """
 
-# Load environment variables from .env FIRST
-from dotenv import load_dotenv
-load_dotenv()
-
-# 🔥 CRITICAL: Отключаем torch redirects ДО всех импортов!
-import os
-os.environ['TORCHELASTIC_ENABLE_FILE_TIMER'] = '0'
-os.environ['TORCH_DISTRIBUTED_DEBUG'] = 'OFF'
-
-# Отключаем multiprocessing redirects в torch
-try:
-    import torch.distributed.elastic.multiprocessing.redirects
-    torch.distributed.elastic.multiprocessing.redirects.redirect = lambda *args, **kwargs: None
-except:
-    pass
-
-from flask import Flask, request, jsonify, g
+from flask import Flask, request, jsonify
 from flask_cors import CORS
 from datetime import datetime, UTC
+import os
 import sys
 import uuid
 import time
+
+# Load environment variables from .env
+from dotenv import load_dotenv
+load_dotenv()
+
+# Dashboard WebSocket integration
+try:
+    from ws_emitter import (
+        emit_pipeline_started, emit_stage_started, emit_stage_completed,
+        emit_ai_call, emit_mod_selected, emit_log, emit_pipeline_completed
+    )
+    DASHBOARD_ENABLED = True
+except ImportError:
+    DASHBOARD_ENABLED = False
+    print("⚠️  Dashboard integration disabled (ws_emitter.py not found)")
 
 sys.path.insert(0, os.path.dirname(__file__))
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
@@ -43,44 +43,9 @@ from smart_categorizer import SmartCategorizer
 from build_recorder import save_modpack_build, submit_feedback
 from ai_sort_feedback import submit_sort_feedback
 from config import DEEPSEEK_API_KEY, SUPABASE_URL, SUPABASE_KEY, CONNECTOR_MODS, BOARD_LAYOUT, CATEGORY_COLORS
-from auth import require_subscription
-from request_logger import get_request_logger
 
 app = Flask(__name__)
-CORS(app)  # Инициализируем CORS СРАЗУ после создания app
-
-
-@app.before_request
-def log_request_info():
-    """Логирование всех входящих запросов"""
-    if request.path == '/health':
-        print(f"[REQUEST] GET /health from {request.remote_addr}")
-    else:
-        print(f"\n[REQUEST] {request.method} {request.path} from {request.remote_addr}")
-        if request.is_json:
-            try:
-                data = request.get_json(silent=True)
-                if data and isinstance(data, dict):
-                    keys = list(data.keys())[:5]
-                    print(f"   Body keys: {keys}")
-            except:
-                pass
-
-
-# Глобальный обработчик ошибок
-@app.errorhandler(500)
-def handle_500_error(e):
-    """Возвращаем JSON вместо HTML на 500 ошибки"""
-    import traceback
-    print(f"\n{'='*80}")
-    print(f"[ERROR] [GLOBAL ERROR HANDLER] 500 Error:")
-    print(f"{'='*80}")
-    traceback.print_exc()
-    print(f"{'='*80}\n")
-    return jsonify({
-        'error': 'Internal server error',
-        'message': str(e) if e else 'Unknown error occurred'
-    }), 500
+CORS(app)
 
 
 @app.route('/health', methods=['GET'])
@@ -225,14 +190,17 @@ def api_build_modpack():
 
 
 @app.route('/api/ai/build-board', methods=['POST'])
-@require_subscription  # Защита: только test/premium/pro
 def api_build_board_state():
     """
     AI сборка модпака в формате board_state.json
     
     Создаёт готовый файл который можно импортировать в лаунчер
     """
+    # 🎯 DASHBOARD: Generate pipeline ID and track start time
+    pipeline_id = str(uuid.uuid4())
     start_time = time.time()
+    
+    # ⏱️ TIMING: Track stage durations
     stage_timings = {}
     
     try:
@@ -253,10 +221,15 @@ def api_build_board_state():
         project_id = data.get('project_id', 'ai-generated-modpack')
         fabric_compat_mode = data.get('fabric_compat_mode', False)
         
-        print(f"[BUILD] Building board_state.json for: {prompt}")
-        print(f"   Current mods: {len(current_mods)}")
-        print(f"   Version: {mc_version}, Loader: {mod_loader}, Max: {max_mods}")
-        print(f"   Fabric Compat: {'ENABLED' if fabric_compat_mode else 'DISABLED'}")
+        print(f"🤖 Building board_state.json for: {prompt}")
+        print(f"🔧 Current mods ({len(current_mods)}): {current_mods}")
+        print(f"🎮 mc_version={mc_version}, mod_loader={mod_loader}, max_mods={max_mods}")
+        print(f"🔧 Fabric Compat Mode: {'ENABLED' if fabric_compat_mode else 'DISABLED'}")
+        
+        # 🎯 DASHBOARD: Emit pipeline started event
+        if DASHBOARD_ENABLED:
+            emit_pipeline_started(pipeline_id, prompt, mc_version, mod_loader, max_mods)
+            emit_log(pipeline_id, "info", f"🚀 Starting modpack builder for: {prompt}")
         
         # Проверяем версию API
         use_v3 = data.get('use_v3_architecture', True)
@@ -264,10 +237,14 @@ def api_build_board_state():
         
         if use_v3:
             build_func = build_modpack_v3
-            print("[V3] Using V3 Architecture-First")
+            print("   🏗️  Using V3 (Architecture-First)")
         elif use_v2:
             build_func = build_modpack_v2
-            print("[V2] Using V2 Enhanced")
+            print("   🚀 Using V2")
+        
+        # 🎯 DASHBOARD: Emit Query Planner stage
+        if DASHBOARD_ENABLED:
+            emit_stage_started(pipeline_id, "Query Planner", "Analyzing user request")
         
         # Вызываем AI логику
         stage_start = time.time()
@@ -281,13 +258,21 @@ def api_build_board_state():
             deepseek_key=DEEPSEEK_API_KEY,
             supabase_url=SUPABASE_URL,
             supabase_key=SUPABASE_KEY,
-            pipeline_id=str(uuid.uuid4())
+            pipeline_id=pipeline_id  # 🎯 DASHBOARD: Pass pipeline ID
         )
         stage_timings['Mod Selection'] = time.time() - stage_start
+        
+        # 🎯 DASHBOARD: Emit stage completion and track mods selected
+        if DASHBOARD_ENABLED:
+            emit_stage_completed(pipeline_id, "Mod Selection", 0)
+            for mod in result.get('mods', [])[:10]:  # First 10 mods for demo
+                emit_mod_selected(pipeline_id, "Mod Selection", mod.get('slug', ''), mod.get('name', ''))
         
         # ========================================================================
         # DEPENDENCY RESOLUTION (AFTER AI SELECTION, BEFORE FABRIC FIX)
         # ========================================================================
+        if DASHBOARD_ENABLED:
+            emit_stage_started(pipeline_id, "Dependency Resolver", "Resolving mod dependencies")
         
         stage_start = time.time()
         deps_before = len(result['mods'])
@@ -301,6 +286,11 @@ def api_build_board_state():
         )
         deps_added = len(result['mods']) - deps_before
         stage_timings['Dependency Resolution'] = time.time() - stage_start
+        
+        if DASHBOARD_ENABLED:
+            emit_stage_completed(pipeline_id, "Dependency Resolver", 0)
+            if deps_added > 0:
+                emit_log(pipeline_id, "success", f"✅ Added {deps_added} dependencies", "Dependency Resolver")
         
         # Конвертируем в формат board_state.json с категориями
         from collections import defaultdict
@@ -317,6 +307,9 @@ def api_build_board_state():
             print("[ARCHITECTURE REFINER] Refining categories based on actual mods")
             print("-" * 80)
             
+            if DASHBOARD_ENABLED:
+                emit_stage_started(pipeline_id, "Architecture Refiner", "Refining categories based on selected mods")
+            
             refiner_start = time.time()
             refined_architecture = refine_architecture(
                 initial_architecture=planned_architecture,
@@ -330,6 +323,22 @@ def api_build_board_state():
                 result['planned_architecture'] = refined_architecture
                 planned_architecture = refined_architecture
                 stage_timings['Architecture Refiner'] = time.time() - refiner_start
+                
+                if DASHBOARD_ENABLED:
+                    # Track AI tokens
+                    if '_tokens' in refined_architecture:
+                        tokens = refined_architecture['_tokens']
+                        emit_ai_call(
+                            pipeline_id, "Architecture Refiner", "deepseek", "deepseek-chat",
+                            tokens.get('prompt_tokens', 0),
+                            tokens.get('completion_tokens', 0),
+                            tokens.get('cost_usd', 0),
+                            0
+                        )
+                    
+                    emit_stage_completed(pipeline_id, "Architecture Refiner", (time.time() - refiner_start) * 1000)
+                    emit_log(pipeline_id, "success", f"✅ Refined to {len(refined_architecture.get('categories', []))} categories", "Architecture Refiner")
+                
                 print()
         
         # ========================================================================
@@ -770,32 +779,7 @@ def api_build_board_state():
         
         stage_timings['Board State Generation'] = time.time() - stage_start
         
-        print(f"[OK] Generated board_state.json with {len(board_state['mods'])} mods and {len(board_state['categories'])} categories")
-        
-        # Save request log to file
-        try:
-            import io
-            import sys
-            # Логируем только если есть build_id
-            if build_id:
-                logger = get_request_logger()
-                # Здесь мы не можем захватить весь stdout, но можем сохранить summary
-                log_content = f"Prompt: {prompt}\n"
-                log_content += f"Version: {mc_version}, Loader: {mod_loader}\n"
-                log_content += f"Total mods: {len(board_state['mods'])}\n"
-                log_content += f"Categories: {len(board_state['categories'])}\n"
-                log_content += f"Build time: {total_time:.2f}s\n\n"
-                log_content += "="*80 + "\n"
-                log_content += "TIMING SUMMARY\n"
-                log_content += "="*80 + "\n"
-                for stage_name, duration in sorted_stages:
-                    percentage = (duration / total_time * 100) if total_time > 0 else 0
-                    log_content += f"{stage_name:30s} {duration:6.2f}s ({percentage:5.1f}%)\n"
-                
-                log_file = logger.write_log(str(build_id).zfill(7), log_content)
-                print(f"\n💾 [Log] Saved to {log_file}")
-        except Exception as log_error:
-            print(f"⚠️  Failed to save log: {log_error}")
+        print(f"✅ Generated board_state.json with {len(board_state['mods'])} mods and {len(board_state['categories'])} categories")
         for cat in board_state['categories']:
             category_mods = [m for m in board_state['mods'] if m.get('category_id') == cat['id']]
             mods_count = len(category_mods)
@@ -865,6 +849,21 @@ def api_build_board_state():
         print("=" * 80)
         print()
         
+        # 🎯 DASHBOARD: Emit pipeline completion
+        if DASHBOARD_ENABLED:
+            duration_ms = total_time * 1000
+            total_tokens = result.get('_pipeline', {}).get('total_tokens', 0) if '_pipeline' in result else 0
+            total_cost = result.get('_pipeline', {}).get('total_cost', 0.0) if '_pipeline' in result else 0.0
+            emit_pipeline_completed(
+                pipeline_id,
+                duration_ms,
+                total_tokens,
+                total_cost,
+                len(board_state['mods']),
+                len(board_state['categories'])
+            )
+            emit_log(pipeline_id, "success", f"✅ Pipeline completed! Generated {len(board_state['mods'])} mods in {len(board_state['categories'])} categories")
+        
         return jsonify({
             'success': True,
             'board_state': board_state,  # Включает _ai_build_id
@@ -891,7 +890,6 @@ def api_build_board_state():
 
 
 @app.route('/api/ai/auto-sort', methods=['POST'])
-@require_subscription  # Защита: только test/premium/pro
 def api_auto_sort():
     """
     AI Auto-Sort - автоматическая категоризация модов на доске
@@ -1346,59 +1344,22 @@ if __name__ != '__main__':
 else:
     # Local development
     print("=" * 60)
-    print("ASTRAL AI API Server")
+    print("🚀 ASTRAL AI API Server")
     print("=" * 60)
     print(f"Server running on: http://localhost:5000")
     print(f"Health check: http://localhost:5000/health")
-    
-    # Cleanup old logs (keep last 4 weeks)
-    try:
-        logger = get_request_logger()
-        logger.cleanup_old_logs(weeks_to_keep=4)
-    except:
-        pass
     print(f"\nEndpoints:")
-    print(f"  POST /api/ai/build       - Build modpack from prompt")
-    print(f"  POST /api/ai/build-board - Build modpack as board_state.json (protected)")
-    print(f"  POST /api/ai/auto-sort  - Auto-sort mods into categories (protected)")
+    print(f"  POST /api/ai/organize              - Organize mods into categories")
+    print(f"  POST /api/ai/build                 - Build modpack from prompt")
+    print(f"  POST /api/ai/build-board           - Build modpack as board_state.json")
+    print(f"  POST /api/ai/auto-sort             - Auto-sort mods into categories")
     print(f"  POST /api/get-mod-tags             - Get custom tags for mods")
     print(f"  POST /api/feedback                 - Submit mod incompatibility feedback")
     print(f"  POST /api/feedback/categorization  - Submit categorization feedback")
-    print(f"  POST /api/feedback/ai-sort         - Submit AI sort feedback")
     print("=" * 60)
     
-    # Диагностика
-    print("\n[DEBUG] Flask app created successfully!")
-    print("[DEBUG] Registered routes:")
-    for rule in app.url_map.iter_rules():
-        print(f"   {rule.methods} {rule.rule}")
-    
-    # Выбор сервера
-    use_waitress = os.getenv('USE_WAITRESS', 'false').lower() == 'true'
-    server_host = os.getenv('FLASK_HOST', '127.0.0.1')
-    
-    if use_waitress:
-        try:
-            from waitress import serve
-            print(f"\n[Waitress] Production server (8 threads)")
-            print(f"   Host: {server_host}, Port: 5000")
-            try:
-                serve(app, host=server_host, port=5000, threads=8)
-            except OSError as e:
-                if "getaddrinfo failed" in str(e):
-                    print(f"\n[WARNING] Network error (ignored for Cloudflare Tunnel)")
-                else:
-                    raise
-        except ImportError:
-            print("[WARNING] Waitress not installed, using Flask dev server")
-            app.run(host=server_host, port=5000, debug=True, use_reloader=True, threaded=True)
-    else:
-        print(f"\n[Flask] Development server (threaded, auto-reload)")
-        print(f"   Host: {server_host}, Port: 5000")
-        try:
-            app.run(host=server_host, port=5000, debug=True, use_reloader=True, threaded=True)
-        except OSError as e:
-            if "getaddrinfo failed" in str(e):
-                print(f"\n[WARNING] Network error (ignored for Cloudflare Tunnel)")
-            else:
-                raise
+    app.run(
+        host='0.0.0.0',
+        port=5000,
+        debug=True
+    )

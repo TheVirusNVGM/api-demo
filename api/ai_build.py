@@ -27,11 +27,12 @@ def build_modpack(
     prompt: str,
     mc_version: str,
     mod_loader: str,
-    current_mods: List[Dict],
+    current_mods: List[str],  # Список project_id модов на доске
     max_mods: int,
-    deepseek_key: str,
-    supabase_url: str,
-    supabase_key: str
+    fabric_compat_mode: bool = False,  # Добавлен для совместимости
+    deepseek_key: str = None,
+    supabase_url: str = None,
+    supabase_key: str = None
 ) -> Dict:
     """
     Собирает модпак используя AI
@@ -67,7 +68,7 @@ def build_modpack(
         },
         json={
             'query_embedding': query_embedding,
-            'match_count': 100  # Берём больше кандидатов
+            'match_count': 300  # Увеличиваем для лучшего покрытия
         }
     )
     
@@ -77,28 +78,64 @@ def build_modpack(
     candidates = response.json()
     print(f"✅ Found {len(candidates)} candidate mods")
     
-    # 3. Фильтруем по версии и лоадеру
+    # Дебаг: показываем первые 10 кандидатов
+    if candidates:
+        print("🔍 Top 10 semantic search results:")
+        for i, mod in enumerate(candidates[:10], 1):
+            print(f"   {i}. {mod.get('name')} ({mod.get('slug')}) - {mod.get('loaders', [])}")
+    
+    # 3. Умная фильтрация с учётом Fabric Compat Mode
+    # Fabric Compat Mode может быть включён пользователем
+    has_fabric_compat = fabric_compat_mode
+    
+    if has_fabric_compat:
+        print("🔧 Fabric Compat Mode: ENABLED (user toggled)")
+        print("   Accepting both fabric AND neoforge/forge mods")
+    
     filtered_candidates = []
     for mod in candidates:
-        # Проверяем совместимость
         mod_versions = mod.get('mc_versions', [])
         mod_loaders = mod.get('loaders', [])
         
         version_ok = mc_version in mod_versions if mod_versions else True
-        loader_ok = mod_loader in mod_loaders if mod_loaders else True
+        
+        # Логика фильтрации loader
+        if has_fabric_compat:
+            # FabricFix активен - принимаем и fabric и neoforge/forge
+            loader_ok = any(loader in mod_loaders for loader in ['fabric', 'neoforge', 'forge']) if mod_loaders else True
+            
+            # Помечаем приоритет для NeoForge версий
+            if version_ok and loader_ok:
+                mod['_prefers_neoforge'] = 'neoforge' in mod_loaders or 'forge' in mod_loaders
+        else:
+            # Обычный режим - только соответствующий loader
+            loader_ok = mod_loader in mod_loaders if mod_loaders else True
         
         if version_ok and loader_ok:
             filtered_candidates.append(mod)
     
+    # Сортируем: сначала NeoForge моды, потом Fabric
+    if has_fabric_compat:
+        filtered_candidates.sort(key=lambda m: (not m.get('_prefers_neoforge', False), -m.get('downloads', 0)))
+    
     print(f"✅ After filtering: {len(filtered_candidates)} compatible mods")
+    
+    # Логируем, если мало кандидатов
+    if len(filtered_candidates) < 20:
+        print(f"⚠️  WARNING: Only {len(filtered_candidates)} compatible mods found!")
+        print(f"   Filters: mc_version={mc_version}, mod_loader={mod_loader}, has_fabric_compat={has_fabric_compat}")
+        if candidates:
+            sample = candidates[0]
+            print(f"   Sample mod versions: {sample.get('mc_versions', [])}")
+            print(f"   Sample mod loaders: {sample.get('loaders', [])}")
     
     # 4. Формируем промпт для DeepSeek
     current_mods_text = ""
     if current_mods:
-        current_mods_text = "CURRENT MODS ON BOARD:\n"
-        for mod in current_mods[:50]:  # Максимум 50 для контекста
-            name = mod.get('name', mod.get('title', 'Unknown'))
-            current_mods_text += f"- {name}\n"
+        current_mods_text = f"CURRENT MODS ON BOARD ({len(current_mods)} mods):\n"
+        # current_mods - это список project_id
+        for mod_id in current_mods[:50]:  # Максимум 50 для контекста
+            current_mods_text += f"- {mod_id}\n"
         current_mods_text += "\n"
     
     candidates_text = "CANDIDATE MODS (choose from these):\n"
@@ -108,7 +145,7 @@ def build_modpack(
         candidates_text += f"   Categories: {', '.join(mod.get('categories', []))}\n"
         candidates_text += f"   Downloads: {mod.get('downloads', 0):,}\n\n"
     
-    prompt_text = f"""You are an expert Minecraft modpack builder. Build a modpack based on user request.
+    prompt_text = f"""You are an expert Minecraft modpack builder. Your task is to PRECISELY follow user's request.
 
 {current_mods_text}
 
@@ -118,31 +155,41 @@ Max mods to add: {max_mods}
 
 {candidates_text}
 
-Task:
-1. Analyze user request and current mods
-2. Select {max_mods} BEST mods from candidates that:
-   - Match user's request
-   - Don't duplicate existing functionality
-   - Are compatible with each other
-   - Include necessary dependencies (like Fabric API)
-3. For each mod explain WHY you selected it
+CRITICAL RULES:
+1. If user asks for SPECIFIC mods by name (e.g., "add sodium and iris", "добавь содиум и ирис"):
+   - Find EXACT matches in candidates list by name
+   - ONLY select those specific mods
+   - DO NOT add any extra mods
+   - Common mod names: Sodium=sodium, Iris=iris, JEI=jei, Jade=jade, REI=rei
 
-Return ONLY valid JSON:
+2. If user asks for a NUMBER of mods (e.g., "add 2 mods", "add 5 performance mods"):
+   - Select EXACTLY that number
+   - DO NOT exceed the requested count
+
+3. If user asks for a CATEGORY (e.g., "optimization mods", "building mods"):
+   - Select up to {max_mods} mods from that category
+   - Focus on the most popular and stable
+
+4. General guidelines:
+   - Check current mods to avoid duplicates
+   - Don't add dependencies unless explicitly needed
+   - Prefer exact name matches over similar mods
+
+RETURN ONLY VALID JSON:
 {{
   "mods": [
     {{
-      "slug": "mod-slug",
-      "reason": "Why this mod was selected"
+      "slug": "mod-slug-from-candidates",
+      "reason": "Brief reason (e.g., 'Requested by user', 'Popular optimization mod')"
     }}
   ],
-  "explanation": "Overall strategy and theme"
+  "explanation": "Short summary of what was added and why"
 }}
 
-Be smart:
-- If user has optimization mods, don't add more
-- Include dependencies automatically
-- Prefer popular, stable mods
-- Balance content vs performance
+EXAMPLES:
+- Request: "add sodium" → Select ONLY sodium mod
+- Request: "add 3 optimization mods" → Select EXACTLY 3 optimization mods
+- Request: "building mods" → Select various building-related mods (up to max_mods)
 """
 
     print("📤 Sending to DeepSeek for final selection...")
@@ -160,7 +207,7 @@ Be smart:
                 'role': 'user',
                 'content': prompt_text
             }],
-            'temperature': 0.4,
+            'temperature': 0.2,  # Низкая температура для точности
             'max_tokens': 4000
         },
         timeout=60

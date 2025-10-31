@@ -1,0 +1,97 @@
+{
+  "version": "1.0.0",
+  "total_capabilities": 65,
+  "categories": {
+    "performance": [
+      "render.pipeline",
+      "memory.footprint",
+      "sim.optimization",
+      "startup.optimization",
+      "culling.entities",
+      "network.optimization",
+      "tick.smoothing"
+    ],
+
+    "graphics": [
+      "shaders.runtime",
+      "ctm.connected_textures",
+      "lighting.system",
+      "visual.effects",
+      "postprocessing.pipeline",
+      "particles.system",
+      "sky.effects",
+      "water.rendering"
+    ],
+
+    "ui": [
+      "ui.menu.extension",
+      "ui.chat.enhancement",
+      "ui.hud.overlay",
+      "ui.keybind.manager",
+      "ui.tooltip.enhancement",
+      "ui.minimap",
+      "ui.inventory.helper"
+    ],
+
+    "world_generation": [
+      "worldgen.biomes",
+      "worldgen.structures",
+      "worldgen.terrain",
+      "worldgen.decoration",
+      "worldgen.ores",
+      "worldgen.dungeons",
+      "worldgen.trees"
+    ],
+
+    "gameplay": [
+      "combat.system",
+      "magic.spellcasting",
+      "magic.rituals",
+      "tech.machines",
+      "tech.energy_system",
+      "automation.core",
+      "storage.network",
+      "transport.movement",
+      "crafting.expansion",
+      "progression.system",
+      "difficulty.scaling",
+      "quests.system"
+    ],
+
+    "utility": [
+      "utility.builder_tools",
+      "utility.measurement",
+      "utility.schematic_editor",
+      "utility.admin_tools",
+      "utility.time_control",
+      "utility.spawn_control"
+    ],
+
+    "multiplayer": [
+      "server.optimization",
+      "server.permissions",
+      "server.economy",
+      "server.anti_cheat",
+      "server.land_protection"
+    ],
+
+    "atmosphere": [
+      "theme.vanilla_plus",
+      "theme.fantasy",
+      "theme.sci_fi",
+      "theme.realistic",
+      "theme.medieval",
+      "theme.horror",
+      "theme.cozy"
+    ],
+
+    "compatibility": [
+      "compatibility.bridge",
+      "compatibility.integration",
+      "dependency.library",
+      "api.exposed",
+      "crossmod.support",
+      "modpack.core"
+    ]
+  }
+}
