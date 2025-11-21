@@ -43,8 +43,7 @@ This repository showcases the **backend architecture** of ASTRAL AI, a productio
 For technical details, see:
 
 - **[README.md](README.md)** - Project overview and features
-- **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)** - Detailed technical architecture
-- **[GITHUB_CHECKLIST.md](GITHUB_CHECKLIST.md)** - Publication checklist
+- **[docs/images/](docs/images/)** - Architecture diagrams
 
 ---
 
