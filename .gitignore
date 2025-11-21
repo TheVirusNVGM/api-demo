@@ -63,13 +63,11 @@ temp_scripts/
 
 # Personal files
 РЕЗЮМЕ*.md
+РЕЗ*.md
 portfolio*.html
 create_resume*.py
 generate_pdfs.py
-
-# Cloudflare & Deployment
 cloudflare-tunnel.yml
-vercel.json
 
 # Test files
 test_*.py
