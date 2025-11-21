@@ -17,9 +17,9 @@ TIER_LIMITS = {
         'ai_token_limit': 0
     },
     'test': {
-        'daily_requests': 50,       # 50 запросов в день
-        'monthly_requests': 1000,   # 1000 в месяц
-        'max_mods_per_request': 50,
+        'daily_requests': 100,      # 100 запросов в день
+        'monthly_requests': 2000,   # 2000 в месяц
+        'max_mods_per_request': 1000000,  # Миллион для тестеров
         'ai_token_limit': 100000    # 100k токенов в месяц
     },
     'premium': {

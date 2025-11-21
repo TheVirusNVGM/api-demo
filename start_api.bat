@@ -51,9 +51,10 @@ if "%USE_WAITRESS%"=="true" (
     timeout /t 3 /nobreak >nul
 )
 
-REM Start Cloudflare Tunnel
+REM Start Cloudflare Tunnel (using configured tunnel: api.astral-ai.online)
 echo Starting Cloudflare Tunnel...
-start "Cloudflare Tunnel" cmd /k cloudflared tunnel --url http://localhost:5000
+echo Using tunnel: api.astral-ai.online
+start "Cloudflare Tunnel" cmd /k cloudflared tunnel run
 
 echo.
 echo ============================================================
@@ -62,6 +63,6 @@ echo.
 echo Server: http://localhost:5000
 echo Mode: %SERVER_NAME%
 echo.
-echo Public URL will be shown in the Cloudflare Tunnel window
-echo Look for: "https://xxxxx.trycloudflare.com"
+echo Public URL: https://api.astral-ai.online
+echo Tunnel: api.astral-ai.online (configured tunnel)
 echo ============================================================

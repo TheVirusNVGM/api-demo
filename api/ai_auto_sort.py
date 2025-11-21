@@ -42,36 +42,90 @@ def auto_sort_mods(
     if user_prompt:
         print(f"   💬 User prompt: {user_prompt}")
     
-    # Подготовка данных для AI
+    # Подготовка данных для AI - используем description (Modrinth) как основной источник информации
     mods_info = []
     for mod in board_mods:
+        mod_name = mod.get("name", mod.get("title", "Unknown"))
+        mod_description = mod.get("description", "")  # Описание с Modrinth
+        mod_tags = mod.get("tags", [])  # Теги Modrinth (если есть)
+        mod_source_id = mod.get("source_id", mod.get("project_id", ""))
+        
+        # Формируем полную информацию о моде
         mod_data = {
-            "name": mod.get("name", mod.get("title", "Unknown")),
-            "description": mod.get("description", mod.get("summary", ""))[:200],
-            "tags": mod.get("tags", []),
-            "source_id": mod.get("source_id", mod.get("project_id", ""))
+            "name": mod_name,
+            "source_id": mod_source_id
         }
+        
+        # Description - КРИТИЧНО: это основной источник информации о функциональности мода (с Modrinth)
+        if mod_description:
+            # Увеличиваем лимит description для более полной информации
+            mod_data["description"] = mod_description[:400] if len(mod_description) > 400 else mod_description
+            if len(mod_description) > 400:
+                mod_data["description_full_length"] = len(mod_description)
+        
+        # Теги Modrinth (если есть) - используем для дополнительного контекста
+        if mod_tags:
+            mod_data["modrinth_tags"] = mod_tags[:10]  # Ограничиваем количество тегов
+        
         mods_info.append(mod_data)
     
     # Температура для DeepSeek (0-2, где 2 = максимальная креативность)
-    # Маппим пользовательскую шкалу 0-10 в 0-2
-    ai_temperature = (creativity / 10.0) * 2.0
+    # Маппим пользовательскую шкалу 0-10 в 0-2, но увеличиваем базовую температуру для креативности
+    ai_temperature = min(1.2 + (creativity / 10.0) * 0.8, 2.0)  # От 1.2 до 2.0
     
-    # Формируем промпт для AI
-    system_prompt = f"""You are an AI assistant that categorizes Minecraft mods into logical groups.
+    # Формируем промпт для AI с акцентом на креативность и description (Modrinth)
+    system_prompt = f"""You are an expert at organizing Minecraft mods into logical, theme-based categories with CREATIVE and EVOCATIVE names.
 
-IMPORTANT: Each mod has already been analyzed and tagged with our custom tag system.
-Your task is to group mods based on their assigned tags.
+Your task: Assign each mod to the BEST matching category based on MOD FUNCTIONALITY (from description) and Modrinth tags.
 
-Available tags in the system: {', '.join(tags_system)}  # Все доступные теги
+**ANALYSIS PRIORITY (in order):**
 
-Your task:
-1. Analyze the provided mods - focus on their TAGS (already assigned by AI)
-2. Group mods with similar tags into {max_categories} or fewer meaningful categories
-3. Category names should reflect the common tags/functionality (short, clear, descriptive in English)
-4. Each mod should belong to exactly ONE category
-5. Try to balance category sizes (10-30 mods per category is ideal)
-6. Group mods by their primary purpose/function based on tags
+1. **READ THE DESCRIPTION FIRST AND CAREFULLY** (HIGHEST PRIORITY)
+   - The description (from Modrinth) describes what the mod actually DOES
+   - Look for keywords: "adds", "overhauls", "changes", "improves", "introduces", "provides"
+   - If description says "adds new weapons" → equipment category
+   - If description says "overhauls combat system" → combat mechanics category
+   - Description is the PRIMARY source of truth - trust it over everything else
+
+2. **Match description meaning to category purpose**
+   - Read what the mod actually does from description
+   - Equipment mods (weapons, armor, tools) → equipment categories
+   - System mods (combat system, progression, mechanics) → system/mechanics categories
+   - Building/decoration mods → building/decoration categories
+   - Visual/graphics mods → graphics/visual categories
+   - Performance mods (FPS, optimization) → performance categories
+   - Library/API mods → library categories
+
+3. **Modrinth tags** (confirmation and context)
+   - Modrinth tags provide additional context about mod type
+   - Common Modrinth tags: "adventure", "magic", "technology", "decoration", "optimization", "library", "api"
+   - Use tags to confirm what the description says
+   - Don't rely solely on tags - description is more important
+
+**CREATIVE CATEGORY NAMING:**
+
+- BE CREATIVE and THEMATIC with category names - avoid generic names
+- DO NOT use generic names like "Combat Mods", "Building Blocks", "Core Systems"
+- Every category name should be evocative and thematic
+- Examples for different pack types:
+  * Medieval/Fantasy: "Knight's Arsenal", "Royal Armory", "Castle Foundations", "Enchanted Visuals"
+  * Tech: "Engineering Hub", "Power Grid", "Core Systems"
+  * Adventure: "Explorer's Toolkit", "Shadow Realms"
+- Look at mod descriptions to understand functionality, then create evocative names
+- Category names should match the overall theme of the modpack (if user prompt provided)
+
+**CATEGORIZATION RULES:**
+
+1. Each mod should belong to exactly ONE category
+2. Create {max_categories} or fewer categories
+3. Try to balance category sizes (5-15 mods per category is ideal)
+4. If a category would have 20+ mods → SPLIT it into 2-3 sub-categories with creative names
+5. Separate libraries (API, dependency mods) from gameplay mods
+   - Look for keywords: "library", "api", "framework", "dependency" in description or tags
+6. Separate performance mods from graphics mods
+   - Performance: "optimization", "fps", "performance", "lag", "memory"
+   - Graphics: "shader", "lighting", "visual", "rendering", "texture"
+7. Group mods by their PRIMARY purpose based on description
 
 {"User's additional instructions: " + user_prompt if user_prompt else ""}
 
@@ -79,18 +133,28 @@ Return ONLY valid JSON in this format:
 {{
   "categories": [
     {{
-      "name": "Performance Optimization",
-      "description": "Mods that improve FPS and reduce lag",
+      "name": "Knight's Arsenal",
+      "description": "Weapons and armor equipment - mods that add new weapons, shields, armor items",
       "mods": ["mod_id_1", "mod_id_2"]
     }}
   ]
 }}"""
 
-    user_message = f"""Categorize these {len(mods_info)} mods:
+    user_message = f"""Categorize these {len(mods_info)} mods into creative, thematic categories:
 
 {json.dumps(mods_info, indent=2, ensure_ascii=False)}
 
-Create up to {max_categories} categories. Return JSON only."""
+**IMPORTANT INSTRUCTIONS:**
+1. Read each mod's DESCRIPTION carefully - it describes what the mod actually does (from Modrinth)
+2. Create CREATIVE and THEMATIC category names (not generic ones)
+3. Group mods by their PRIMARY function based on description content
+4. Use Modrinth tags (if provided) as additional context, but trust description more
+5. Separate libraries (API, dependency mods) from gameplay mods
+6. Separate performance mods from graphics mods
+7. Create up to {max_categories} categories
+8. If a category would have 20+ mods → SPLIT it into 2-3 sub-categories
+
+Return JSON only."""
 
     try:
         # Запрос к DeepSeek

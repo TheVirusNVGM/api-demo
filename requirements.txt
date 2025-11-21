@@ -7,3 +7,4 @@ python-dotenv>=1.0.0
 supabase>=2.0.0
 pyjwt>=2.8.0
 waitress>=2.1.2  # Production WSGI server (optional, for production deployment)
+huggingface-hub>=0.34.0,<1.0  # Required for sentence-transformers compatibility

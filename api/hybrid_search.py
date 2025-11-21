@@ -4,12 +4,16 @@ Layer 1: Hybrid Search Engine
 """
 
 import requests
+import json
 from typing import Dict, List, Tuple
 from sentence_transformers import SentenceTransformer
 from collections import defaultdict
 import math
 import re
 from config import BM25_K1, BM25_B, CONNECTOR_MODS, CATEGORY_SYNONYMS
+
+# FFAPI source_id (Forgified Fabric API) - проблемный мод для NeoForge
+FFAPI_SOURCE_ID = 'Aqlf1Shp'
 
 # Глобальная модель embeddings
 embedding_model = None
@@ -28,7 +32,8 @@ def get_embedding_model():
 def execute_search_plan(
     search_plan: Dict,
     supabase_url: str,
-    supabase_key: str
+    supabase_key: str,
+    fabric_compat_mode: bool = False  # Добавляем параметр для фильтрации FFAPI
 ) -> List[Dict]:
     """
     Выполняет план поиска и возвращает candidates
@@ -37,6 +42,7 @@ def execute_search_plan(
         search_plan: План поиска от Query Planner
         supabase_url: URL Supabase
         supabase_key: Ключ Supabase
+        fabric_compat_mode: Режим совместимости Fabric
     
     Returns:
         List кандидатов с scores
@@ -66,14 +72,16 @@ def execute_search_plan(
                 query_text=query_text,
                 limit=limit,
                 supabase_url=supabase_url,
-                supabase_key=supabase_key
+                supabase_key=supabase_key,
+                fabric_compat_mode=fabric_compat_mode
             )
         elif query_type == 'keyword':
             results = keyword_search(
                 query_text=query_text,
                 limit=limit,
                 supabase_url=supabase_url,
-                supabase_key=supabase_key
+                supabase_key=supabase_key,
+                fabric_compat_mode=fabric_compat_mode
             )
         else:
             print(f"   ⚠️  Unknown query type: {query_type}")
@@ -137,7 +145,8 @@ def vector_search(
     query_text: str,
     limit: int,
     supabase_url: str,
-    supabase_key: str
+    supabase_key: str,
+    fabric_compat_mode: bool = False
 ) -> List[Dict]:
     """
     Векторный поиск через Supabase
@@ -166,6 +175,33 @@ def vector_search(
     
     results = response.json()
     
+    # Фильтр FFAPI: если fabric_compat_mode выключен, исключаем моды с FFAPI зависимостью
+    # Проверяем dependencies прямо в результатах (если они есть) или делаем быструю проверку
+    if not fabric_compat_mode:
+        filtered_results = []
+        skipped_count = 0
+        for mod in results:
+            dependencies = mod.get('dependencies', {})
+            
+            # Если dependencies это строка JSON - парсим
+            if isinstance(dependencies, str):
+                try:
+                    dependencies = json.loads(dependencies)
+                except:
+                    dependencies = {}
+            
+            # Проверяем наличие FFAPI в dependencies
+            if isinstance(dependencies, dict) and FFAPI_SOURCE_ID in dependencies:
+                skipped_count += 1
+                continue  # Пропускаем мод с FFAPI зависимостью
+            
+            filtered_results.append(mod)
+        
+        if skipped_count > 0:
+            print(f"   🚫 Skipped {skipped_count} mod(s) with FFAPI dependency")
+        
+        results = filtered_results
+    
     # Добавляем search score (distance → similarity)
     for mod in results:
         # Supabase возвращает distance (меньше = лучше)
@@ -180,7 +216,8 @@ def keyword_search(
     query_text: str,
     limit: int,
     supabase_url: str,
-    supabase_key: str
+    supabase_key: str,
+    fabric_compat_mode: bool = False
 ) -> List[Dict]:
     """
     Keyword поиск с BM25 scoring
@@ -201,16 +238,20 @@ def keyword_search(
     
     or_query = ','.join(or_conditions)
     
+    # Параметры запроса
+    params = {
+        'or': f'({or_query})',
+        'limit': limit * 3,  # Берём больше для лучшего BM25
+        'select': '*,dependencies'  # Включаем dependencies для фильтрации FFAPI
+    }
+    
     response = requests.get(
         f'{supabase_url}/rest/v1/mods',
         headers={
             'apikey': supabase_key,
             'Authorization': f'Bearer {supabase_key}',
         },
-        params={
-            'or': f'({or_query})',
-            'limit': limit * 3  # Берём больше для лучшего BM25
-        },
+        params=params,
         timeout=30
     )
     
@@ -219,6 +260,32 @@ def keyword_search(
         return []
     
     results = response.json()
+    
+    # Фильтр FFAPI: если fabric_compat_mode выключен, исключаем моды с FFAPI зависимостью
+    if not fabric_compat_mode:
+        filtered_results = []
+        skipped_count = 0
+        for mod in results:
+            dependencies = mod.get('dependencies', {})
+            
+            # Если dependencies это строка JSON - парсим
+            if isinstance(dependencies, str):
+                try:
+                    dependencies = json.loads(dependencies)
+                except:
+                    dependencies = {}
+            
+            # Проверяем наличие FFAPI в dependencies
+            if isinstance(dependencies, dict) and FFAPI_SOURCE_ID in dependencies:
+                skipped_count += 1
+                continue  # Пропускаем мод с FFAPI зависимостью
+            
+            filtered_results.append(mod)
+        
+        if skipped_count > 0:
+            print(f"   🚫 Skipped {skipped_count} mod(s) with FFAPI dependency")
+        
+        results = filtered_results
     
     # Применяем BM25 scoring
     results_with_bm25 = calculate_bm25_scores(results, keywords)

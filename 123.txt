@@ -1,0 +1,1824 @@
+[SSE BUILD] Starting SSE stream...
+   Prompt: Create a fully optimized Minecraft modpack concept tailored for a laptop with an i5-6100 CPU and 8GB RAM. The modpack must run smoothly and be carefully optimized. Theme: Hardcore Medieval Zombie Apocalypse SMP.  Core Requirements  Medieval-themed world — no modern guns, no city apocalypse, no modern tech.  Technology must exist, but only in a primitive, tribal, medieval or early-industrial style, similar to Doctor Stone-level tech.  No solar panels, no futuristic items.  Mechanical, gear-based, windmill/watermill systems are allowed.  Magic system must be full-featured, using:  Dark magic  Classic medieval Merlin/Camelot-style magic  Zombie Behavior (very important)  Extremely intelligent AI.  Zombies must:  Break blocks  Track players using sound  Get attracted to light sources  Detect sound or light from very long distances  Spawn in massive hordes (50–100 units)  During night, visibility becomes so low that players feel almost blind.  Light sources provide very weak illumination.  Special giant zombie “brute” monsters appear:  Hidden in dark forests  Rarely spawning  Also appear during Blood Moons  Blood Moon System  Blood Moons trigger massive zombie invasions.  Hordes automatically move toward bases.  Players must defend their settlements from siege-like attacks.  World & Atmosphere  Large, open-world map.  Environment must be:  Dark, cold, harsh  Forest-heavy and frightening  No villages or normal structures.  Acceptable structure generation:  Abandoned medieval castles  Ruined strongholds  Large walls or “beyond the wall” style terrain (inspired by Game of Thrones)  Tribal SMP Gameplay  World designed for multiple tribes (groups of players).  Tribes are:  Sometimes hostile  Sometimes forced to cooperate for survival  Cooperation becomes necessary:  To trade food  To exchange primitive technology  To survive massive zombie events  To maintain warmth in extremely cold weather  Progression & Survival  Progression must be slow, difficult, and exhausting.  Technology unlock system must be multi-stage and very challenging.  Advanced tools or machines require effort, trade, or tribal cooperation.  Harsh survival mechanics:  Realistic hunger  Severe cold/heat requirement (temperature survival)  Limited resources  Combat & Equipment  Weapons must be medieval:  Swords  Spears  Shields  Bows  Siege-like defensive tools  Optional:  Mechanical turrets (primitive/gear-based only)  Defensive medieval fortifications  Overall Goal  Create a modpack concept that forces players to:  Stay inside safe bases  Fear venturing into darkness  Cooperate or fight other tribes  Survive overwhelming zombie threats  Slowly build primitive tech and medieval magic  Defend their tribe like in FALL OUT, but with a medieval setting  The final output should include:  Suggested mods  Compatibility notes  Optimization strategies for low-end hardware  Optional configuration ideas  Recommended AI, zombie, worldgen, magic and tech mods  Final structure of the modpack
+   Current mods: 0
+   Version: 1.20.1, Loader: forge, Max: 150
+================================================================================
+
+[V3] Using V3 Architecture-First
+[SSE] 🤖 Calling build_modpack...
+[SSE] ⏰ Starting heartbeat thread to keep QUIC connection alive...
+================================================================================
+🚀 Starting AI Modpack Builder V3 (Architecture-First)
+================================================================================
+📝 User Prompt: Create a fully optimized Minecraft modpack concept tailored for a laptop with an i5-6100 CPU and 8GB RAM. The modpack must run smoothly and be carefully optimized. Theme: Hardcore Medieval Zombie Apocalypse SMP.  Core Requirements  Medieval-themed world — no modern guns, no city apocalypse, no modern tech.  Technology must exist, but only in a primitive, tribal, medieval or early-industrial style, similar to Doctor Stone-level tech.  No solar panels, no futuristic items.  Mechanical, gear-based, windmill/watermill systems are allowed.  Magic system must be full-featured, using:  Dark magic  Classic medieval Merlin/Camelot-style magic  Zombie Behavior (very important)  Extremely intelligent AI.  Zombies must:  Break blocks  Track players using sound  Get attracted to light sources  Detect sound or light from very long distances  Spawn in massive hordes (50–100 units)  During night, visibility becomes so low that players feel almost blind.  Light sources provide very weak illumination.  Special giant zombie “brute” monsters appear:  Hidden in dark forests  Rarely spawning  Also appear during Blood Moons  Blood Moon System  Blood Moons trigger massive zombie invasions.  Hordes automatically move toward bases.  Players must defend their settlements from siege-like attacks.  World & Atmosphere  Large, open-world map.  Environment must be:  Dark, cold, harsh  Forest-heavy and frightening  No villages or normal structures.  Acceptable structure generation:  Abandoned medieval castles  Ruined strongholds  Large walls or “beyond the wall” style terrain (inspired by Game of Thrones)  Tribal SMP Gameplay  World designed for multiple tribes (groups of players).  Tribes are:  Sometimes hostile  Sometimes forced to cooperate for survival  Cooperation becomes necessary:  To trade food  To exchange primitive technology  To survive massive zombie events  To maintain warmth in extremely cold weather  Progression & Survival  Progression must be slow, difficult, and exhausting.  Technology unlock system must be multi-stage and very challenging.  Advanced tools or machines require effort, trade, or tribal cooperation.  Harsh survival mechanics:  Realistic hunger  Severe cold/heat requirement (temperature survival)  Limited resources  Combat & Equipment  Weapons must be medieval:  Swords  Spears  Shields  Bows  Siege-like defensive tools  Optional:  Mechanical turrets (primitive/gear-based only)  Defensive medieval fortifications  Overall Goal  Create a modpack concept that forces players to:  Stay inside safe bases  Fear venturing into darkness  Cooperate or fight other tribes  Survive overwhelming zombie threats  Slowly build primitive tech and medieval magic  Defend their tribe like in FALL OUT, but with a medieval setting  The final output should include:  Suggested mods  Compatibility notes  Optimization strategies for low-end hardware  Optional configuration ideas  Recommended AI, zombie, worldgen, magic and tech mods  Final structure of the modpack
+🎮 Version: 1.20.1, Loader: forge
+📦 Current mods: 0, Max new mods: 150
+
+🆔 Pipeline ID: 29b37a46-0300-4a38-b344-aec1cde15f40
+
+🔧 Fabric Compatibility Mode: DISABLED
+   → Only accepting forge mods
+
+[LAYER 0] Query Planner
+--------------------------------------------------------------------------------
+🧠 [Query Planner] Analyzing user request...
+📥 [Query Planner] Received response
+   📊 Tokens: 2,614 (prompt: 2,251, completion: 363)
+   💵 Cost: $0.000417
+✅ [Query Planner] Created search plan:
+   Strategy: hybrid
+   Queries: 5
+   Target candidates: 300
+
+🏗️  [V3] THEMED MODPACK FLOW - Architecture-First
+================================================================================
+
+[STEP 0] Baseline Mods Loader
+--------------------------------------------------------------------------------
+
+📌 [Baseline Loader] Loading baseline mods from database...
+   🔄 Loading mods for client-side filtering...
+   📦 Loaded 1000 mods from DB
+   🔍 Found 50 mods with baseline-mod tag after filtering
+   📊 Fetched 50 mods with baseline-mod tag
+   🚫 Excluded 13 fabric-api mods (hard exclusion for forge)
+   🚫 Excluded 1 mods requiring FFAPI (fabric compat mode disabled)
+   ⛔ Filtered out 9 mods (incompatible with forge)
+   ✅ Loaded 27 compatible baseline mods
+      • Entity Culling
+      • FerriteCore
+      • ImmediatelyFast
+      • YetAnotherConfigLib (YACL)
+      • Xaero's Minimap
+      • Xaero's World Map
+      • AppleSkin
+      • ModernFix
+      • [EMF] Entity Model Features
+      • Not Enough Animations
+      ... and 17 more
+
+[LAYER 1.5] Architecture Planner
+--------------------------------------------------------------------------------
+🔍 [Architecture Planner] Searching for reference modpacks...
+   Query: "Create a fully optimized Minecraft modpack concept..."
+   → Found 5 reference modpacks with valid architectures
+   1. Zombie Apocalypse (similarity: 0.777)
+      → 42 capabilities, 42 provider groups
+      → Versions: 1.20.1...
+   2. Zombie Invade 100 Days (similarity: 0.731)
+      → 44 capabilities, 44 provider groups
+      → Versions: 1.20.1...
+   3. Day of the Dead (Zombie Apocalypse) (similarity: 0.731)
+      → 48 capabilities, 48 provider groups
+      → Versions: 1.20.1...
+   4. Guns and Zombies (similarity: 0.723)
+      → 34 capabilities, 34 provider groups
+      → Versions: 1.20.1...
+   5. Zombie Survivalist (similarity: 0.718)
+      → 54 capabilities, 54 provider groups
+      → Versions: 1.20.1...
+
+📊 [Architecture Planner] Extracting capability patterns...
+   Top capabilities across 5 reference modpacks:
+   • api.exposed: 5/5 modpacks
+   • combat.system: 5/5 modpacks
+   • compatibility.bridge: 5/5 modpacks
+   • crafting.expansion: 5/5 modpacks
+   • ctm.connected_textures: 5/5 modpacks
+   • culling.entities: 5/5 modpacks
+   • dependency.library: 5/5 modpacks
+   • difficulty.scaling: 5/5 modpacks
+   • lighting.system: 5/5 modpacks
+   • memory.footprint: 5/5 modpacks
+
+🔍 [Architecture Planner] Analyzing baseline mod distribution in reference modpacks...
+   Top capabilities in baseline mods:
+   • sim.optimization: 9 baseline mods
+   • memory.footprint: 7 baseline mods
+   • dependency.library: 6 baseline mods
+   • api.exposed: 5 baseline mods
+   • render.pipeline: 4 baseline mods
+   • ui.hud.overlay: 4 baseline mods
+   • visual.effects: 4 baseline mods
+   • ui.minimap: 2 baseline mods
+   • ui.tooltip.enhancement: 2 baseline mods
+   • startup.optimization: 2 baseline mods
+   📊 Baseline mods frequently appear in these capabilities:
+   • api.exposed: appears in 5 reference modpacks
+   • dependency.library: appears in 5 reference modpacks
+   • memory.footprint: appears in 5 reference modpacks
+   • render.pipeline: appears in 5 reference modpacks
+   • sim.optimization: appears in 5 reference modpacks
+
+📝 [Architecture Planner] Planning modpack architecture...
+   📊 Dynamic category calculation:
+      Base: 12, Capability diversity: 6.3, Prompt complexity: 4.5, Reference diversity: 1.0
+      → Target: 20 categories
+📥 [Architecture Planner] Received plan
+   📊 Tokens: 4,182 (prompt: 2,488, completion: 1,694)
+   💵 Cost: $0.000823
+✅ [Architecture Planner] Planned 20 categories:
+   📚 Royal Archives: 8 mods (target)
+      Required: dependency.library, api.exposed
+   📚 Performance & Optimization: 6 mods (target)
+      Required: memory.footprint, sim.optimization, startup.optimization
+   📚 Shadow Realm Atmosphere: 12 mods (target)
+      Required: theme.realistic, worldgen.biomes, worldgen.structures
+   📚 Undead Horde Core: 8 mods (target)
+      Required: mob.ai, difficulty.scaling, combat.system
+   📚 Blood Moon Siege: 5 mods (target)
+      Required: event.special, combat.siege, difficulty.extreme
+   📚 Knight's Arsenal: 10 mods (target)
+      Required: combat.melee, combat.ranged, equipment.medieval
+   📚 Castle Keep Defense: 8 mods (target)
+      Required: building.defense, automation.primitive, crafting.mechanical
+   📚 Ancient Forge: 12 mods (target)
+      Required: crafting.primitive, automation.core, tech.medieval
+   📚 Mystical Arts: 9 mods (target)
+      Required: magic.dark, magic.medieval, spell.casting
+   📚 Tribal Survival: 7 mods (target)
+      Required: survival.temperature, survival.hunger, difficulty.hardcore
+   📚 Frozen Wastelands: 6 mods (target)
+      Required: weather.extreme, environment.hazard, temperature.system
+   📚 Shadow Illumination: 5 mods (target)
+      Required: lighting.atmospheric, darkness.enhanced, shaders.runtime
+   📚 Tribal Diplomacy: 6 mods (target)
+      Required: multiplayer.tribe, trade.system, player.interaction
+   📚 Medieval Craftsmanship: 10 mods (target)
+      Required: crafting.medieval, tool.primitive, resource.gathering
+   📚 Ancient Bestiary: 8 mods (target)
+      Required: mob.fantasy, creature.medieval, boss.monster
+   📚 Ruined Strongholds: 7 mods (target)
+      Required: structure.medieval, exploration.reward, loot.system
+   📚 Siege Engineering: 9 mods (target)
+      Required: automation.mechanical, tech.primitive, engineering.medieval
+   📚 Wasteland Agriculture: 6 mods (target)
+      Required: farming.harsh, food.system, crop.growth
+   📚 Dark Arts Enhancement: 7 mods (target)
+      Required: magic.enhancement, ritual.complex, spell.variety
+   📚 Apocalypse Interface: 5 mods (target)
+      Required: ui.hud.overlay, ui.chat.enhancement, interface.themed
+   🎯 Total target: 154 mods
+
+[LAYER 1] Hybrid Search (capability-filtered)
+--------------------------------------------------------------------------------
+   🎯 Required capabilities: 59
+   ⭐ Preferred capabilities: 40
+🔍 [Hybrid Search] Executing search plan...
+   🔎 SEMANTIC query: "medieval zombie apocalypse hardcore survival triba..." (weight=0.9)
+      → Found 40 mods
+   🔎 SEMANTIC query: "intelligent zombies break blocks track players hor..." (weight=0.8)
+      → Found 40 mods
+   🔎 SEMANTIC query: "primitive technology mechanical gear medieval magi..." (weight=0.7)
+      → Found 40 mods
+   🔎 SEMANTIC query: "performance optimization FPS low-end hardware lapt..." (weight=0.6)
+      → Found 40 mods
+   🔎 KEYWORD query: "sodium lithium modernfix entityculling dynamic-fps..." (weight=0.5)
+   🚫 Skipped 3 mod(s) with FFAPI dependency
+      → Found 150 mods
+🔗 [Hybrid Search] Fusing 310 results...
+   → 283 unique mods after fusion
+🔧 [Hybrid Search] Applying filters...
+   🔧 Filters: min_downloads=5000, required_capabilities={'api.exposed', 'spell.casting', 'mob.ai', 'dependency.library', 'ritual.complex', 'survival.temperature', 'magic.enhancement', 'magic.dark', 'exploration.reward', 'creature.medieval', 'combat.siege', 'worldgen.structures', 'structure.medieval', 'trade.system', 'automation.core', 'engineering.medieval', 'spell.variety', 'theme.realistic', 'building.defense', 'shaders.runtime', 'combat.ranged', 'crafting.medieval', 'automation.mechanical', 'tech.medieval', 'survival.hunger', 'farming.harsh', 'crop.growth', 'tech.primitive', 'multiplayer.tribe', 'automation.primitive', 'difficulty.hardcore', 'sim.optimization', 'equipment.medieval', 'combat.melee', 'worldgen.biomes', 'food.system', 'mob.fantasy', 'difficulty.extreme', 'environment.hazard', 'boss.monster', 'weather.extreme', 'magic.medieval', 'loot.system', 'crafting.primitive', 'darkness.enhanced', 'player.interaction', 'memory.footprint', 'ui.hud.overlay', 'temperature.system', 'combat.system', 'event.special', 'startup.optimization', 'difficulty.scaling', 'lighting.atmospheric', 'resource.gathering', 'crafting.mechanical', 'interface.themed', 'ui.chat.enhancement', 'tool.primitive'}
+   ⏭️  Skipped (incompatible): sodium ↔️ exordium
+   ⏭️  Skipped (low downloads): noconsolespam - 1339 < 5000
+   ⏭️  Skipped (incompatible): rubidium-extra ↔️ exordium
+   ⏭️  Skipped (low downloads): stutterfix-refurbished - 2953 < 5000
+   → 176 mods after filtering
+🎨 [Hybrid Search] Ensuring diversity...
+   → 149 mods after diversity check
+✅ [Hybrid Search] Returning 149 candidates
+
+[LAYER 2] Final Selector (architecture-aware)
+--------------------------------------------------------------------------------
+🎯 [Final Selector] Selecting best 150 mods from 149 candidates...
+   📌 [Baseline] Adding 27 baseline mods automatically...
+   ✅ Baseline mods to include: Entity Culling, FerriteCore, ImmediatelyFast, YetAnotherConfigLib (YACL), Xaero's Minimap
+      ... and 22 more
+   ℹ️  Baseline mods are NOT counted in mod limit (they're the foundation)
+   📋 All candidates (149 mods):
+      1. Noisium (noisium)
+      2. ModernFix (modernfix)
+      3. Zombies+ (zombies-plus-frenzied-horde)
+      4. Zombie Horsemen (zombie-horsemen)
+      5. We Got Runners! (we-got-runners!)
+      6. Zombies Reworked (zombies-reworked)
+      7. Zombies More (zombies-more)
+      8. Sculk Horde (sculk-horde)
+      9. Undead Nights - Zombie Horde Nights (undead-nights)
+      10. The Undead Revamped (the-undead-revamped)
+      11. Zombie Nightmare Expansions - Undead Horror Monsters (zoniex)
+      12. Zombie Horse Spawn (zombie-horse-spawn)
+      13. Mo' Zombies Wave (mo-zombies-wave)
+      14. Zombie Awareness (zombie-awareness)
+      15. Mebahel's Zombie Horde (mebahels-zombie-horde)
+      16. Keerdm Zombie Apocolypse  Essentials (keerdm-zombie-apocolypse-essentials)
+      17. ZombieApocalypseAddon (apocolypseaddons)
+      18. The Graveyard (FORGE/NEOFORGE) (the-graveyard-forge)
+      19. SCP: Overtime (scp-overtime)
+      20. zombie siege (Guns in minecraft loot chests) (zombie-siege-(guns-in-minecraft-loot-chests))
+      ... and 129 more
+   ⚡ Fast path: 149 <= 150, returning all candidates
+
+[DATA ENRICHMENT] Fetching full mod data...
+--------------------------------------------------------------------------------
+💾 [Data Enrichment] Fetching full data for 167 mods...
+✅ [Data Enrichment] Complete: 167 mods enriched
+
+
+================================================================================
+✅ AI Modpack Builder V3 Complete
+================================================================================
+📦 Selected: 167 mods
+💡 Explanation: Fast-path selection: all candidates fit within limit...
+
+Pipeline 29b37a46... executed:
+  • Candidates: 149
+  • AI Selected: 167
+  • Dependencies: 0
+  • Total Mods: 0
+  • AI Calls: 3
+  • Tokens Used: 6,796
+  • Est. Cost: $0.0012
+
+[SSE] ✅ AI selection complete in 168.4s: 167 mods selected
+================================================================================
+🔗 [Dependency Resolver] Resolving required dependencies...
+================================================================================
+🔍 Filtering selected mods by loader compatibility...
+🔥 Resolving conflicts by popularity...
+
+📦 Collecting required dependencies...
+   🔍 Found 35 unique dependencies to fetch
+   ℹ️  Skipped 175 dependencies (optional/already selected/version mismatch)
+      - Zombies More → 8BmcQJ2H... (already selected)
+      - Sculk Horde → 8BmcQJ2H... (already selected)
+      - The Undead Revamped → 8BmcQJ2H... (already selected)
+      - Zombie Nightmare Expansions - Undead Horror Monsters → k0RPP4IO... (optional)
+      - Zombie Nightmare Expansions - Undead Horror Monsters → A8rzsSSb... (optional)
+      - Zombie Horse Spawn → e0M1UDsY... (version mismatch: ['1.21.10'])
+      - Keerdm Zombie Apocolypse  Essentials → SzzJttH8... (optional)
+      - The Graveyard (FORGE/NEOFORGE) → 8BmcQJ2H... (version mismatch: ['1.20.4'])
+      - SCP: Overtime → 8BmcQJ2H... (already selected)
+      - Villager Recruits → 967vM4zw... (optional)
+      ... and 165 more
+   🚀 Fetching all dependencies in one batch...
+   ✅ Fetched 34/35 mods from DB
+   ⚠️  Missing 1 dependencies in DB:
+      - aNPQU8kd...
+
+🔧 Processing dependencies...
+   🔍 Noisium
+   🔍 ModernFix
+   🔍 Zombies+
+      ✅ Architectury API (source_id: lhGA9TYQ...)
+      ✅ Cloth Config API (source_id: 9s6osm5g...)
+   🔍 Zombie Horsemen
+   🔍 We Got Runners!
+   🔍 Zombies Reworked
+      ✅ ClockworkLib (source_id: XfHtTZhK...)
+   🔍 Zombies More
+      ⏭️  8BmcQJ2H... already in selected mods
+   🔍 Sculk Horde
+      ⏭️  8BmcQJ2H... already in selected mods
+   🔍 Undead Nights - Zombie Horde Nights
+   🔍 The Undead Revamped
+      ⏭️  8BmcQJ2H... already in selected mods
+   🔍 Zombie Nightmare Expansions - Undead Horror Monsters
+      ⏭️  k0RPP4IO... is optional dependency
+      ⏭️  A8rzsSSb... is optional dependency
+   🔍 Zombie Horse Spawn
+      ⏭️  e0M1UDsY... - version mismatch (required: ['1.21.10'], got: 1.20.1)
+   🔍 Mo' Zombies Wave
+   🔍 Zombie Awareness
+      ✅ CoroUtil (source_id: rLLJ1OZM...)
+   🔍 Mebahel's Zombie Horde
+      ⏭️  Fabric API - Not available for forge (only for: fabric)
+   🔍 Keerdm Zombie Apocolypse  Essentials
+      ✅ The Lost Cities (source_id: 8VDCUS3b...)
+      ⏭️  SzzJttH8... is optional dependency
+      ✅ Immersive Weathering (source_id: jkskOO9i...)
+      ✅ Moonlight Lib (source_id: twkfQtEc...)
+   🔍 ZombieApocalypseAddon
+   🔍 The Graveyard (FORGE/NEOFORGE)
+      ⏭️  8BmcQJ2H... already in selected mods
+   🔍 SCP: Overtime
+      ⚠️  Dependency aNPQU8kd... (aNPQU8kd...) not found in DB
+      ⏭️  8BmcQJ2H... already in selected mods
+      ✅ playerAnimator (source_id: gedNE4y2...)
+   🔍 zombie siege (Guns in minecraft loot chests)
+   🔍 Villager Recruits
+      ⏭️  967vM4zw... is optional dependency
+      ⏭️  rGWEHQrP... is optional dependency
+      ⏭️  WrpuIfhw... is optional dependency
+      ⏭️  d4elsJgD... is optional dependency
+      ⏭️  pWpEhhT7... is optional dependency
+      ⏭️  L6jvzao4... is optional dependency
+   🔍 Villages&Pillages
+      ⏭️  Fabric API - Not available for forge (only for: fabric)
+      ✅ YUNG's API (source_id: Ua7DFN59...)
+   🔍 Sleepy Hollows
+      ⏭️  Cloth Config API already added as dependency
+      ⏭️  iGEl6Crx... - version mismatch (required: ['1.21.1'], got: 1.20.1)
+      ⏭️  Architectury API already added as dependency
+   🔍 80% Abandoned Villages
+   🔍 GraveStone Mod
+      ⏭️  nvQzSEkH... already in selected mods
+   🔍 The John Mod Reborn
+   🔍 The Last of us - Zombie Apocalypse
+      ⏭️  8BmcQJ2H... already in selected mods
+   🔍 Zombie Apocalypse Core
+   🔍 Apocalypse Now
+      ✅ Curios API (source_id: vvuO3ImH...)
+   🔍 Upgraded Mobs
+   🔍 Lunar
+      ⏭️  Fabric API - Not available for forge (only for: fabric)
+      ⏭️  Cloth Config API already added as dependency
+   🔍 Horde Nights
+      ⏭️  MI1LWe93... is optional dependency
+      ⏭️  alk9mtOr... is optional dependency
+      ⏭️  zhrv5yZg... is optional dependency
+      ⏭️  Dh7L06bd... is optional dependency
+      ⏭️  xcJwNe9u... is optional dependency
+      ⏭️  P7dR8mSH... - version mismatch (required: ['1.21', '1.21.1', '1.21.2', '1.21.3', '1.21.4', '1.21.5', '1.21.6', '1.21.7', '1.21.8', '25w31a', '25w32a', '25w33a', '25w34a', '25w34b'], got: 1.20.1)
+      ⏭️  VoVJ47kN... is optional dependency
+   🔍 Apocalypse Rebooted
+      ✅ Crust (source_id: ctPaIxnk...)
+      ⏭️  u6dRKJwZ... is optional dependency
+   🔍 zombie siege (Content pack)
+   🔍 More Zombie Villagers
+      ⏭️  e0M1UDsY... - version mismatch (required: ['1.21.10'], got: 1.20.1)
+   🔍 Skeletal Remains
+      ⏭️  ccKDOlHs... - version mismatch (required: ['1.21.1'], got: 1.20.1)
+   🔍 Mutants and Zombies
+   🔍 Zombie Villagers From Spawner
+      ⏭️  e0M1UDsY... - version mismatch (required: ['1.21.10'], got: 1.20.1)
+   🔍 CorpseComplex Unofficial
+   🔍 Cracker's Wither Storm Mod
+   🔍 Zombie Proof Doors
+      ⏭️  e0M1UDsY... - version mismatch (required: ['1.21.10'], got: 1.20.1)
+   🔍 The Hordes
+      ⏭️  iAlZk5aS... is optional dependency
+      ⏭️  G6VHtQr4... - version mismatch (required: ['1.21', '1.21.1'], got: 1.20.1)
+      ⏭️  u6dRKJwZ... is optional dependency
+   🔍 Urkaz Moon Tools
+      ⏭️  2rL16t1O... already in selected mods
+      ⏭️  Cloth Config API already added as dependency
+      ⏭️  Architectury API already added as dependency
+      ⏭️  PwhlJMsW... already in selected mods
+   🔍 Dawn of the Flood - "Rising Tides"
+      ✅ Fabridge (source_id: E3aKSGBI...)
+      ⏭️  ClockworkLib already added as dependency
+      ⏭️  8BmcQJ2H... already in selected mods
+      ✅ AAA Particles (source_id: En8uHTOK...)
+   🔍 ReTargetato
+   🔍 Enhanced Celestials
+      ⏭️  z2XEADmE... - version mismatch (required: ['1.21.1'], got: 1.20.1)
+      ⏭️  ziOp6EO8... - version mismatch (required: ['1.21.1'], got: 1.20.1)
+   🔍 [TACZ] NPCs
+      ⏭️  8BmcQJ2H... already in selected mods
+      ⏭️  PuyPazRT... already in selected mods
+      ✅ [TaCZ] Timeless and Classics Zero (source_id: SzzJttH8...)
+   🔍 MEDIEVAL CRAFT (weapons)
+   🔍 MEDIEVAL CRAFT
+      ⏭️  XGzo2c0O... already in selected mods
+   🔍 Better Deep Dark
+   🔍 Fantasy Weapons (Medieval Series)
+      ⏭️  oVmpjYQ5... already in selected mods
+   🔍 Fantasy Armor (Medieval Series)
+      ⏭️  8BmcQJ2H... already in selected mods
+      ⏭️  rsBLWxD0... already in selected mods
+   🔍 Mana and Artifice
+      ⏭️  JE0fgMUp... is optional dependency
+      ⏭️  Curios API already added as dependency
+      ⏭️  EltpO5cN... is optional dependency
+      ⏭️  8BmcQJ2H... already in selected mods
+   🔍 Infusion Table
+      ⏭️  Architectury API already added as dependency
+   🔍 Amethyst Equipment
+   🔍 Majrusz's Enchantments
+      ✅ Majrusz Library (source_id: PYQD8noM...)
+   🔍 Medieval Origins Revival
+      ⏭️  3BeIrqZR... - version mismatch (required: ['1.21.1'], got: 1.20.1)
+      ⏭️  XvoWJaA2... - version mismatch (required: ['1.21.1'], got: 1.20.1)
+   🔍 Big Brain
+   🔍 no_moon.jar
+      ⏭️  8BmcQJ2H... already in selected mods
+   🔍 SmartBrainLib
+   🔍 Redstone Cascade
+      ⏭️  8BmcQJ2H... already in selected mods
+   🔍 EEEAB 's Mobs
+      ⏭️  Curios API already added as dependency
+   🔍 The Boiled One: Reimagined
+      ⏭️  8BmcQJ2H... already in selected mods
+   🔍 Disable Enderman Picking Up Blocks
+   🔍 Palladium
+      ⏭️  CYQ7VYrM... - version mismatch (required: ['1.21.5', '1.21.6', '1.21.7', '1.21.8'], got: 1.20.1)
+      ⏭️  mOgUt4GM... is optional dependency
+      ⏭️  YL57xq9U... is optional dependency
+      ⏭️  P7dR8mSH... - version mismatch (required: ['1.21.5', '1.21.6', '1.21.7', '1.21.8'], got: 1.20.1)
+   🔍 Canary
+      ⏭️  2eT495vq... already in selected mods
+      ⏭️  I2K4u1Q7... is optional dependency
+   🔍 Easy Disenchanting
+      ⏭️  vBbPDuOs... - version mismatch (required: ['1.21.1'], got: 1.20.1)
+      ⏭️  P7dR8mSH... - version mismatch (required: ['1.21.1'], got: 1.20.1)
+   🔍 Enchanting With TFC
+      ✅ TerraFirmaCraft (source_id: JaCEZUhg...)
+   🔍 Easy Magic
+      ⏭️  Fabric API - Not available for forge (only for: fabric)
+      ⏭️  5WeWGLoJ... is optional dependency
+      ⏭️  ohNO6lps... already in selected mods
+      ⏭️  QAGBst4M... already in selected mods
+   🔍 Goety - The Dark Arts
+      ⏭️  nU0bVIaL... is optional dependency
+      ⏭️  Curios API already added as dependency
+   🔍 Enchanted: Witchcraft
+      ⏭️  SYrakyVL... - version mismatch (required: ['1.21.1'], got: 1.20.1)
+      ⏭️  ohNO6lps... already in selected mods
+      ⏭️  P7dR8mSH... - version mismatch (required: ['1.21.1'], got: 1.20.1)
+      ⏭️  8BmcQJ2H... already in selected mods
+      ⏭️  D1lhcTKz... - version mismatch (required: ['1.21.1'], got: 1.20.1)
+   🔍 Create: Enchantment Industry
+      ⏭️  dzb1a5WV... - version mismatch (required: ['1.21.1'], got: 1.20.1)
+   🔍 Sortilege
+      ⏭️  UVtY3ZAC... is optional dependency
+      ⏭️  fRiHVvU7... is optional dependency
+   🔍 Enchantery
+      ⏭️  Moonlight Lib already added as dependency
+   🔍 Malum
+      ⏭️  bN3xUWdo... - version mismatch (required: ['1.21.1'], got: 1.20.1)
+      ⏭️  Curios API already added as dependency
+   🔍 Create: Enchantable Machinery
+      ⏭️  ordsPcFz... - version mismatch (required: ['1.21.1'], got: 1.20.1)
+      ⏭️  LNytGWDc... - version mismatch (required: ['1.21.1'], got: 1.20.1)
+   🔍 Ancient Manuscripts
+   🔍 Mystical Adaptations
+      ✅ Mystical Agriculture (source_id: C95ReXie...)
+      ✅ Mystical Agradditions (source_id: pl0jGXIx...)
+   🔍 Silent Gear
+      ⏭️  BQhuHQo4... - version mismatch (required: ['1.21', '1.21.1'], got: 1.20.1)
+   🔍 Epic Knights'n'Mages - Forge
+      ✅ Ars Nouveau (source_id: TKB6INcv...)
+      ⏭️  8BmcQJ2H... already in selected mods
+   🔍 Wizard's Reborn
+      ⏭️  Curios API already added as dependency
+      ✅ Fluffy Fur (source_id: srqzRpcV...)
+   🔍 Dis-Enchanting Table
+      ⏭️  9leXt4A5... - version mismatch (required: ['1.21.9', '1.21.10'], got: 1.20.1)
+   🔍 Scriptor Magicae
+      ⏭️  BvsO32QY... - version mismatch (required: ['1.21.1'], got: 1.20.1)
+      ⏭️  P7dR8mSH... - version mismatch (required: ['1.21.1'], got: 1.20.1)
+   🔍 Primal Magick
+      ⏭️  HIuqnQpi... - version mismatch (required: ['1.21.1'], got: 1.20.1)
+   🔍 Blood Magic
+      ✅ Patchouli (source_id: nU0bVIaL...)
+   🔍 Enchanting Infuser
+      ⏭️  QAGBst4M... already in selected mods
+   🔍 DarkSmelting
+   🔍 FPS Reducer
+      ⏭️  Fabric API - Not available for forge (only for: fabric)
+   🔍 BadOptimizations
+   🔍 Entity Culling
+      ⏭️  Fabric API - Not available for forge (only for: fabric)
+   🔍 Dynamic FPS
+      ⏭️  Cloth Config API already added as dependency
+      ⏭️  Fabric API - Not available for forge (only for: fabric)
+      ⏭️  mOgUt4GM... is optional dependency
+   🔍 Flerovium
+      ⏭️  sk9rgfiA... already in selected mods
+   🔍 Sodium/Embeddium Device Check 钠/铷-设备检测
+      ⏭️  4ZqxOvjD... already in selected mods
+   🔍 Rubidium
+   🔍 RuOK
+      ⏭️  AANobbMI... is optional dependency
+      ⏭️  Cloth Config API already added as dependency
+      ⏭️  sk9rgfiA... already in selected mods
+   🔍 FPS Boost
+      ⏭️  MlsBPB9a... - version mismatch (required: ['1.21.1'], got: 1.20.1)
+   🔍 Accelerated Rendering
+      ⏭️  bxn6Iwdo... is optional dependency
+   🔍 Exordium
+      ⏭️  Fabric API - Not available for forge (only for: fabric)
+   🔍 FerriteCore
+   🔍 Reflex AntiLag
+   🔍 ImmediatelyFast
+   🔍 Distant Horizons
+   🔍 GPUBooster
+      ⏭️  JNRr4jji... already in selected mods
+   🔍 Super Resolution
+      ⏭️  Cloth Config API already added as dependency
+      ⏭️  Architectury API already added as dependency
+   🔍 FPS Monitor
+   🔍 Saturn
+   🔍 Idle Boost
+      ⏭️  mOgUt4GM... is optional dependency
+      ⏭️  P7dR8mSH... - version mismatch (required: ['1.21.1'], got: 1.20.1)
+   🔍 Particle Core
+      ⏭️  Fabric Language Kotlin - Not available for forge (only for: fabric)
+      ✅ Fzzy Config (source_id: hYykXjDp...)
+      ✅ Kotlin for Forge (source_id: ordsPcFz...)
+      ⏭️  Fabric API - Not available for forge (only for: fabric)
+      ⏭️  Kotlin for Forge already added as dependency
+   🔍 Achievements Optimizer
+   🔍 Gnetum
+      ⏭️  G1ckZuWK... - version mismatch (required: ['1.12.2'], got: 1.20.1)
+   🔍 Krypton FNP
+   🔍 Redirector
+   🔍 Radium
+      ⏭️  qa2H4BS9... already in selected mods
+   🔍 The Afterdark
+      ⏭️  P7dR8mSH... - version mismatch (required: ['1.21.5'], got: 1.20.1)
+   🔍 Memory Leak Fix
+   🔍 Camera Overhaul
+      ⏭️  Cloth Config API already added as dependency
+      ⏭️  mOgUt4GM... is optional dependency
+   🔍 Very Many Players (Forge)
+   🔍 Unlit Campfire
+      ⏭️  nvQzSEkH... already in selected mods
+   🔍 Dynamic Electricity
+      ✅ Voltaic (source_id: kzF5itx6...)
+      ✅ Electrodynamics (source_id: xmhmr70o...)
+   🔍 Sodium Options Mod Compat
+      ⏭️  Fabric API - Not available for forge (only for: fabric)
+      ⏭️  Es5v4eyq... already in selected mods
+   🔍 钠-汉化模组（Sodium Chinese Localization Mod）
+      ⏭️  4ZqxOvjD... already in selected mods
+   🔍 Sodium Extras
+      ⏭️  Sodium - Not available for forge (only for: fabric, neoforge, quilt)
+      ⏭️  Fabric API - Not available for forge (only for: fabric)
+      ⏭️  Es5v4eyq... already in selected mods
+      ⏭️  sk9rgfiA... already in selected mods
+   🔍 Sodium/Rubidium Occlusion Culling Fix
+      ⏭️  4ZqxOvjD... already in selected mods
+   🔍 Chloride (Embeddium++/Sodium++)
+      ⏭️  AANobbMI... - version mismatch (required: ['1.21.1'], got: 1.20.1)
+      ⏭️  sk9rgfiA... already in selected mods
+   🔍 Xenon
+      ⏭️  vqqx0QiE... already in selected mods
+      ⏭️  sk9rgfiA... already in selected mods
+      ⏭️  S1tndFDa... is optional dependency
+   🔍 CreateBetterFps
+      ⏭️  YL57xq9U... is optional dependency
+      ⏭️  AANobbMI... - version mismatch (required: ['1.21'], got: 1.20.1)
+   🔍 Embeddium
+   🔍 TipTheScales
+   🔍 Better Biome Reblend
+      ⏭️  AANobbMI... is optional dependency
+      ⏭️  Fabric API - Not available for forge (only for: fabric)
+   🔍 Sodium Options API
+      ⏭️  Sodium - Not available for forge (only for: fabric, neoforge, quilt)
+      ⏭️  Fabric API - Not available for forge (only for: fabric)
+      ⏭️  sk9rgfiA... already in selected mods
+   🔍 Yuushya Modelling
+   🔍 WI Zoom
+      ⏭️  Fabric API - Not available for forge (only for: fabric)
+   🔍 Sodium Dynamic Lights
+      ⏭️  Fabric API - Not available for forge (only for: fabric)
+      ⏭️  Es5v4eyq... already in selected mods
+      ⏭️  Sodium - Not available for forge (only for: fabric, neoforge, quilt)
+   🔍 YUNG's Cave Biomes
+      ⏭️  mOgUt4GM... is optional dependency
+      ⏭️  8BmcQJ2H... already in selected mods
+      ⏭️  Cloth Config API already added as dependency
+      ⏭️  YUNG's API already added as dependency
+      ⏭️  kkmrDlKT... - version mismatch (required: ['1.21', '1.21.1'], got: 1.20.1)
+      ⏭️  P7dR8mSH... - version mismatch (required: ['1.21', '1.21.1'], got: 1.20.1)
+   🔍 Mekanism Covers
+      ✅ Mekanism (source_id: Ce6I4WUE...)
+   🔍 Just Enough Mekanism Multiblocks
+      ⏭️  ZUDRV4lN... is optional dependency
+      ⏭️  OFVYKsAk... is optional dependency
+      ⏭️  HUZkxNTQ... is optional dependency
+      ⏭️  Mekanism already added as dependency
+      ⏭️  u6dRKJwZ... - version mismatch (required: ['1.21.1'], got: 1.20.1)
+   🔍 Connected Glass
+      ⏭️  p19vrgc2... - version mismatch (required: ['1.21.4', '1.21.5', '1.21.6', '1.21.7', '1.21.8'], got: 1.20.1)
+      ⏭️  B0g2vT6l... is optional dependency
+      ⏭️  rOUBggPv... - version mismatch (required: ['1.21.4', '1.21.5', '1.21.6', '1.21.7', '1.21.8'], got: 1.20.1)
+   🔍 Yuushya Townscape
+      ⏭️  Architectury API already added as dependency
+   🔍 Tom's Simple Storage Mod
+      ⏭️  tagwiZkJ... is optional dependency
+      ⏭️  nfn13YXA... is optional dependency
+      ⏭️  Orvt0mRa... is optional dependency
+      ⏭️  u6dRKJwZ... is optional dependency
+      ⏭️  5aaWibi9... is optional dependency
+      ⏭️  fRiHVvU7... is optional dependency
+   🔍 Doggy Talents Next
+   🔍 YetAnotherConfigLib (YACL)
+      ⏭️  Fabric API - Not available for forge (only for: fabric)
+   🔍 Exposure
+      ⏭️  Fabric API - Not available for forge (only for: fabric)
+      ⏭️  u6dRKJwZ... is optional dependency
+      ⏭️  ohNO6lps... already in selected mods
+      ⏭️  Xbc0uyRg... is optional dependency
+      ⏭️  LNytGWDc... is optional dependency
+   🔍 Toni's Immersive Lanterns
+      ✅ Accessories (source_id: jtmvUHXj...)
+      ⏭️  Fabric API - Not available for forge (only for: fabric)
+      ✅ TxniLib (source_id: vBbPDuOs...)
+      ⏭️  PxQSWIcD... already in selected mods
+   🔍 Lithosphere
+   🔍 Nyctophobia Dread
+   🔍 Connectored C2ME (C2ME fork for connector) (C3ME)
+      ⏭️  Sinytra Connector - Fabric Compatibility mod (mode disabled)
+   🔍 Potion Cauldron
+   🔍 Mod Sets
+      ⏭️  mOgUt4GM... is optional dependency
+      ⏭️  Fabric Language Kotlin - Not available for forge (only for: fabric)
+      ⏭️  1eAoo2KR... already in selected mods
+      ⏭️  FFeAJNCx... is optional dependency
+      ✅ Kinecraft (source_id: epmEbmF0...)
+   🔍 Cosmic Horizons
+   🔍 Xaero's Minimap
+      ⏭️  Fabric API - Not available for forge (only for: fabric)
+      ⏭️  gF3BGWvG... is optional dependency
+   🔍 Xaero's World Map
+      ⏭️  Fabric API - Not available for forge (only for: fabric)
+      ⏭️  gF3BGWvG... is optional dependency
+   🔍 AppleSkin
+      ⏭️  Fabric API - Not available for forge (only for: fabric)
+   🔍 [EMF] Entity Model Features
+      ✅ [ETF] Entity Texture Features (source_id: BVzZfTc1...)
+   🔍 Not Enough Animations
+      ⏭️  Fabric API - Not available for forge (only for: fabric)
+   🔍 3D Skin Layers
+      ⏭️  Fabric API - Not available for forge (only for: fabric)
+   🔍 Jade 🔍
+      ⏭️  u6dRKJwZ... is optional dependency
+      ⏭️  P7dR8mSH... - version mismatch (required: ['1.19.2', '1.18.2'], got: 1.20.1)
+   🔍 No Chat Reports
+      ⏭️  mOgUt4GM... is optional dependency
+      ⏭️  Cloth Config API already added as dependency
+      ⏭️  P7dR8mSH... - version mismatch (required: ['1.21.1'], got: 1.20.1)
+   🔍 Simple Voice Chat
+      ⏭️  UL4bJFDY... is optional dependency
+      ⏭️  SRlzjEBS... is optional dependency
+      ⏭️  YlKdE5VK... is optional dependency
+      ⏭️  Cloth Config API already added as dependency
+      ⏭️  qyVF9oeo... is optional dependency
+      ⏭️  mOgUt4GM... is optional dependency
+      ⏭️  Vebnzrzj... is optional dependency
+      ⏭️  9eGKb6K1... already in selected mods
+   🔍 Puzzles Lib
+      ⏭️  Fabric API - Not available for forge (only for: fabric)
+      ⏭️  ohNO6lps... already in selected mods
+   🔍 Forge Config API Port
+      ⏭️  5WeWGLoJ... is optional dependency
+      ⏭️  Fabric API - Not available for forge (only for: fabric)
+      ⏭️  mOgUt4GM... is optional dependency
+   🔍 Balm
+      ⏭️  Fabric API - Not available for forge (only for: fabric)
+      ⏭️  Cloth Config API already added as dependency
+   🔍 Geckolib
+      ⏭️  Fabric API - Not available for forge (only for: fabric)
+   🔍 Mouse Tweaks
+      ⏭️  Fabric API - Not available for forge (only for: fabric)
+      ⏭️  mOgUt4GM... is optional dependency
+   🔍 Chat Heads
+      ⏭️  Cloth Config API already added as dependency
+   🔍 Melody
+      ⏭️  Fabric API - Not available for forge (only for: fabric)
+   🔍 Model Gap Fix
+      ⏭️  Fabric API - Not available for forge (only for: fabric)
+   🔍 Debugify
+      ⏭️  1eAoo2KR... already in selected mods
+      ⏭️  P7dR8mSH... - version mismatch (required: ['1.21.1'], got: 1.20.1)
+      ⏭️  mOgUt4GM... is optional dependency
+      ⏭️  Cloth Config API already added as dependency
+
+📋 Added dependencies (30 mods):
+   • Architectury API (source_id: lhGA9TYQ..., required by: Zombies+)
+   • Cloth Config API (source_id: 9s6osm5g..., required by: Zombies+)
+   • ClockworkLib (source_id: XfHtTZhK..., required by: Zombies Reworked)
+   • CoroUtil (source_id: rLLJ1OZM..., required by: Zombie Awareness)
+   • The Lost Cities (source_id: 8VDCUS3b..., required by: Keerdm Zombie Apocolypse  Essentials)
+   • Immersive Weathering (source_id: jkskOO9i..., required by: Keerdm Zombie Apocolypse  Essentials)
+   • Moonlight Lib (source_id: twkfQtEc..., required by: Immersive Weathering)
+   • playerAnimator (source_id: gedNE4y2..., required by: SCP: Overtime)
+   • YUNG's API (source_id: Ua7DFN59..., required by: Villages&Pillages)
+   • Curios API (source_id: vvuO3ImH..., required by: Apocalypse Now)
+   • Crust (source_id: ctPaIxnk..., required by: Apocalypse Rebooted)
+   • Fabridge (source_id: E3aKSGBI..., required by: Dawn of the Flood - "Rising Tides")
+   • AAA Particles (source_id: En8uHTOK..., required by: Dawn of the Flood - "Rising Tides")
+   • [TaCZ] Timeless and Classics Zero (source_id: SzzJttH8..., required by: [TACZ] NPCs)
+   • Majrusz Library (source_id: PYQD8noM..., required by: Majrusz's Enchantments)
+   • TerraFirmaCraft (source_id: JaCEZUhg..., required by: Enchanting With TFC)
+   • Mystical Agriculture (source_id: C95ReXie..., required by: Mystical Adaptations)
+   • Mystical Agradditions (source_id: pl0jGXIx..., required by: Mystical Adaptations)
+   • Ars Nouveau (source_id: TKB6INcv..., required by: Epic Knights'n'Mages - Forge)
+   • Fluffy Fur (source_id: srqzRpcV..., required by: Wizard's Reborn)
+   • Patchouli (source_id: nU0bVIaL..., required by: Blood Magic)
+   • Fzzy Config (source_id: hYykXjDp..., required by: Particle Core)
+   • Kotlin for Forge (source_id: ordsPcFz..., required by: Fzzy Config)
+   • Voltaic (source_id: kzF5itx6..., required by: Dynamic Electricity)
+   • Electrodynamics (source_id: xmhmr70o..., required by: Dynamic Electricity)
+   • Mekanism (source_id: Ce6I4WUE..., required by: Mekanism Covers)
+   • Accessories (source_id: jtmvUHXj..., required by: Toni's Immersive Lanterns)
+   • TxniLib (source_id: vBbPDuOs..., required by: Toni's Immersive Lanterns)
+   • Kinecraft (source_id: epmEbmF0..., required by: Mod Sets)
+   • [ETF] Entity Texture Features (source_id: BVzZfTc1..., required by: [EMF] Entity Model Features)
+
+🔍 Checking conflicts with dependencies...
+
+✅ [Dependency Resolver] Complete:
+   - AI selected: 167 mods
+   - After loader filter: 167 mods
+   - Dependencies added: 30 mods
+   - Total: 197 mods (167 gameplay + 30 libraries)
+   ℹ️  Dependencies are NOT counted in mod limit (they're libraries)
+
+🔍 [Final Check] Returning 197 mods:
+   - Selected mods: 167
+   - Dependencies: 30
+
+[ARCHITECTURE REFINER] Refining categories
+
+🔧 [Architecture Refiner] Refining architecture based on actual mods...
+   Initial categories: 20
+   Total mods to organize: 197
+   📊 Mod analysis:
+      Gameplay mods: 155
+      Library mods: 42
+      Unique capability prefixes: 31
+📥 [Architecture Refiner] Received refined plan
+   📊 Tokens: 6,149 (prompt: 4,101, completion: 2,048)
+   💵 Cost: $0.001148
+✅ [Architecture Refiner] Refined to 25 categories:
+   📚 Royal Archives: ~12 mods
+      Capabilities: dependency.library, api.exposed
+   📚 Performance Core: ~15 mods
+      Capabilities: memory.footprint, sim.optimization
+   📚 Visual Optimization: ~12 mods
+      Capabilities: render.pipeline, render.optimization
+   📚 Startup Acceleration: ~12 mods
+      Capabilities: startup.optimization, utility.loading
+   📚 Shadow Realm Worldgen: ~12 mods
+      Capabilities: worldgen.biomes, worldgen.structures
+   📚 Undead Intelligence: ~12 mods
+      Capabilities: mob.ai, difficulty.scaling
+   📚 Zombie Variants: ~12 mods
+      Capabilities: combat.system, mob.variation
+   📚 Horde Mechanics: ~10 mods
+      Capabilities: combat.system, difficulty.scaling
+   📚 Blood Moon Siege: ~8 mods
+      Capabilities: event.special, combat.siege
+   📚 Knight's Arsenal: ~12 mods
+      Capabilities: combat.melee, combat.ranged
+   📚 Combat Enhancement: ~10 mods
+      Capabilities: combat.system, difficulty.scaling
+   📚 Defensive Fortifications: ~10 mods
+      Capabilities: building.defense, crafting.mechanical
+   📚 Ancient Forge: ~8 mods
+      Capabilities: crafting.primitive, automation.core
+   📚 Dark Arts: ~8 mods
+      Capabilities: magic.dark, spell.casting
+   📚 Medieval Mysticism: ~8 mods
+      Capabilities: magic.medieval, spell.casting
+   📚 Tribal Survival: ~8 mods
+      Capabilities: survival.temperature, survival.hunger
+   📚 Frozen Wastelands: ~8 mods
+      Capabilities: weather.extreme, temperature.system
+   📚 Shadow Illumination: ~8 mods
+      Capabilities: lighting.atmospheric, darkness.enhanced
+   📚 Tribal Diplomacy: ~8 mods
+      Capabilities: multiplayer.tribe, trade.system
+   📚 Medieval Craftsmanship: ~10 mods
+      Capabilities: crafting.medieval, tool.primitive
+   📚 Ancient Bestiary: ~8 mods
+      Capabilities: mob.fantasy, creature.medieval
+   📚 Ruined Strongholds: ~8 mods
+      Capabilities: structure.medieval, exploration.reward
+   📚 Siege Engineering: ~8 mods
+      Capabilities: automation.mechanical, tech.primitive
+   📚 Wasteland Agriculture: ~8 mods
+      Capabilities: farming.harsh, food.system
+   📚 Apocalypse Interface: ~8 mods
+      Capabilities: ui.hud.overlay, ui.chat.enhancement
+   🎯 Total estimated: 243 mods
+   💡 Reasoning: Split the 4 overloaded categories (Performance & Optimization, Undead Horde Core, Knight's Arsenal, Royal Archives) into multiple thematic sub-categor...
+📝 [Build Recorder] Saved build: 0000037
+💾 [Build Saved] build_id=0000037
+
+🎯 [Mod Distribution] AI-based distribution to categories...
+   Categories: 25
+   Mods to distribute: 197
+   📊 Split: 112 gameplay, 16 graphics, 40 performance, 29 libraries
+
+🔍 [Library Detection Debug] All 197 classifications:
+   ⚡ noisium → PERFORMANCE (weight: 90, performance caps: ['startup.optimization', 'sim.optimization'])
+   ⚡ modernfix → PERFORMANCE (weight: 90, performance caps: ['memory.footprint', 'startup.optimization'])
+   ❌ zombies-plus-frenzied-horde → GAMEPLAY (weight: 75, gameplay caps: ['combat.system'])
+   ❌ zombie-horsemen → GAMEPLAY (weight: 75, gameplay caps: ['combat.system'])
+   ❌ we-got-runners! → GAMEPLAY (weight: 75, gameplay caps: ['difficulty.scaling', 'combat.system'])
+   ❌ zombies-reworked → GAMEPLAY (weight: 75, gameplay caps: ['combat.system'])
+   ❌ zombies-more → GAMEPLAY (weight: 75, gameplay caps: ['combat.system'])
+   ❌ sculk-horde → GAMEPLAY (weight: 75, gameplay caps: ['progression.system', 'difficulty.scaling'])
+   ❌ undead-nights → GAMEPLAY (weight: 75, gameplay caps: ['difficulty.scaling', 'combat.system'])
+   ❌ the-undead-revamped → GAMEPLAY (weight: 75, gameplay caps: ['difficulty.scaling', 'combat.system'])
+   ❌ zoniex → GAMEPLAY (weight: 75, gameplay caps: ['worldgen.biomes'])
+   ❌ zombie-horse-spawn → GAMEPLAY (weight: 50, regular mod fallback (no clear indicators))
+   ❌ mo-zombies-wave → GAMEPLAY (weight: 75, gameplay caps: ['difficulty.scaling', 'combat.system'])
+   ❌ zombie-awareness → GAMEPLAY (weight: 75, gameplay caps: ['difficulty.scaling'])
+   ❌ mebahels-zombie-horde → GAMEPLAY (weight: 75, gameplay caps: ['difficulty.scaling', 'combat.system'])
+   ❌ keerdm-zombie-apocolypse-essentials → GAMEPLAY (weight: 75, gameplay caps: ['difficulty.scaling', 'combat.system'])
+   ❌ apocolypseaddons → GAMEPLAY (weight: 75, gameplay caps: ['difficulty.scaling', 'combat.system'])
+   ❌ the-graveyard-forge → GAMEPLAY (weight: 75, gameplay caps: ['worldgen.structures', 'combat.system'])
+   ❌ scp-overtime → GAMEPLAY (weight: 75, gameplay caps: ['magic.spellcasting'])
+   ❌ zombie-siege-(guns-in-minecraft-loot-chests) → GAMEPLAY (weight: 75, gameplay caps: ['tech.energy_system', 'tech.machines'])
+   ❌ villager-recruits → GAMEPLAY (weight: 75, gameplay caps: ['progression.system', 'combat.system'])
+   ❌ villages-and-pillages → GAMEPLAY (weight: 75, gameplay caps: ['worldgen.structures', 'combat.system'])
+   ❌ sleepy-hollows → GAMEPLAY (weight: 75, gameplay caps: ['worldgen.biomes'])
+   ❌ abandoned-villages → GAMEPLAY (weight: 75, gameplay caps: ['theme.horror', 'worldgen.structures'])
+   ❌ gravestone-mod → GAMEPLAY (weight: 50, regular mod fallback (no clear indicators))
+   ❌ john_mod_reborn → GAMEPLAY (weight: 75, gameplay caps: ['combat.system'])
+   ❌ last-of-us-zombie-apocalypse → GAMEPLAY (weight: 75, gameplay caps: ['theme.horror', 'difficulty.scaling'])
+   ✅ zac → LIBRARY (weight: 85, library name keywords: ['core'])
+   ❌ apocalypse-now → GAMEPLAY (weight: 75, gameplay caps: ['difficulty.scaling', 'combat.system'])
+   ❌ upgraded-mobs → GAMEPLAY (weight: 75, gameplay caps: ['difficulty.scaling'])
+   ❌ lunar → GAMEPLAY (weight: 80, graphics + gameplay summary: ['mob', 'mobs'])
+   ❌ blood-moon → GAMEPLAY (weight: 75, gameplay caps: ['magic.rituals'])
+   ❌ apocalypse-rebooted → GAMEPLAY (weight: 75, gameplay caps: ['difficulty.scaling', 'combat.system'])
+   ❌ zombie-siege-(content-pack) → GAMEPLAY (weight: 75, gameplay caps: ['combat.system'])
+   ❌ more-zombie-villagers → GAMEPLAY (weight: 75, gameplay caps: ['difficulty.scaling'])
+   ❌ skeletal-remains → GAMEPLAY (weight: 75, gameplay caps: ['worldgen.biomes', 'combat.system'])
+   ❌ mutants-and-zombies → GAMEPLAY (weight: 75, gameplay caps: ['combat.system'])
+   ❌ zombie-villagers-from-spawner → GAMEPLAY (weight: 70, ui caps: ['ui.menu.extension'])
+   ❌ corpsecomplex-unofficial → GAMEPLAY (weight: 75, gameplay caps: ['progression.system', 'difficulty.scaling'])
+   ❌ crackers-wither-storm-mod → GAMEPLAY (weight: 75, gameplay caps: ['progression.system', 'combat.system'])
+   ❌ zombie-proof-doors → GAMEPLAY (weight: 70, ui caps: ['ui.menu.extension'])
+   ❌ the-hordes → GAMEPLAY (weight: 75, gameplay caps: ['difficulty.scaling', 'combat.system'])
+   ❌ urkaz-moon-tools → GAMEPLAY (weight: 70, ui caps: ['ui.menu.extension'])
+   ❌ dawn-of-the-flood → GAMEPLAY (weight: 75, gameplay caps: ['combat.system'])
+   ⚡ retargetato → PERFORMANCE (weight: 90, performance caps: ['sim.optimization'])
+   ❌ enhanced-celestials → GAMEPLAY (weight: 80, graphics + gameplay caps: ['difficulty.scaling'], gameplay summary: ['mob', 'craft'])
+   ❌ tacz-npcs → GAMEPLAY (weight: 75, gameplay caps: ['combat.system'])
+   ❌ medieval-craft-(weapons) → GAMEPLAY (weight: 75, gameplay caps: ['crafting.expansion', 'combat.system'])
+   ❌ medieval-craft-(structures) → GAMEPLAY (weight: 75, gameplay caps: ['worldgen.structures', 'combat.system'])
+   ❌ better-deep-dark → GAMEPLAY (weight: 75, gameplay caps: ['worldgen.structures', 'progression.system'])
+   ❌ fantasy_weapons → GAMEPLAY (weight: 75, gameplay caps: ['combat.system'])
+   ❌ fantasy_armor → GAMEPLAY (weight: 80, graphics + gameplay tags: ['armor', 'decorative-blocks'], gameplay summary: ['weapon', 'armor'])
+   ❌ mana-and-artifice → GAMEPLAY (weight: 75, gameplay caps: ['magic.spellcasting', 'magic.rituals'])
+   ❌ infusion-table → GAMEPLAY (weight: 75, gameplay caps: ['magic.spellcasting', 'crafting.expansion'])
+   ❌ amethyst-equipment → GAMEPLAY (weight: 75, gameplay caps: ['combat.system'])
+   ❌ majruszs-enchantments → GAMEPLAY (weight: 75, gameplay caps: ['magic.spellcasting', 'combat.system'])
+   ❌ medieval-origins-revival → GAMEPLAY (weight: 75, gameplay caps: ['progression.system'])
+   ⚡ big-brain → PERFORMANCE (weight: 90, performance caps: ['sim.optimization'])
+   ❌ no_moon.jar → GAMEPLAY (weight: 75, gameplay caps: ['difficulty.scaling'])
+   ⚡ smartbrainlib → PERFORMANCE (weight: 90, performance caps: ['sim.optimization'])
+   ❌ redstone-cascade → GAMEPLAY (weight: 75, gameplay caps: ['combat.system'])
+   ❌ eeeab-s-mobs → GAMEPLAY (weight: 75, gameplay caps: ['difficulty.scaling', 'combat.system'])
+   ❌ the-boiled-one-reimagined → GAMEPLAY (weight: 75, gameplay caps: ['theme.horror', 'combat.system'])
+   ❌ disable-enderman-picking-up-blocks → GAMEPLAY (weight: 70, ui caps: ['ui.menu.extension'])
+   ⚡ mpalladium → PERFORMANCE (weight: 90, performance caps: ['memory.footprint', 'sim.optimization'])
+   ⚡ canary → PERFORMANCE (weight: 90, performance caps: ['memory.footprint', 'sim.optimization'])
+   ❌ easy-disenchanting → GAMEPLAY (weight: 75, gameplay caps: ['crafting.expansion'])
+   ❌ enchanting-with-tfc → GAMEPLAY (weight: 75, gameplay caps: ['magic.spellcasting', 'crafting.expansion'])
+   ❌ easy-magic → GAMEPLAY (weight: 75, gameplay caps: ['crafting.expansion'])
+   ❌ goety → GAMEPLAY (weight: 75, gameplay caps: ['magic.spellcasting', 'magic.rituals'])
+   ❌ enchanted-witchcraft → GAMEPLAY (weight: 75, gameplay caps: ['magic.spellcasting', 'magic.rituals'])
+   ❌ create-enchantment-industry → GAMEPLAY (weight: 75, gameplay caps: ['tech.machines', 'automation.core'])
+   ❌ sortilege → GAMEPLAY (weight: 75, gameplay caps: ['magic.spellcasting'])
+   ❌ enchantery → GAMEPLAY (weight: 75, gameplay caps: ['progression.system'])
+   ❌ malum → GAMEPLAY (weight: 75, gameplay caps: ['magic.spellcasting', 'magic.rituals'])
+   ❌ create-enchantable-machinery → GAMEPLAY (weight: 75, gameplay caps: ['automation.core'])
+   ❌ ancient-manuscripts → GAMEPLAY (weight: 75, gameplay caps: ['magic.spellcasting', 'magic.rituals'])
+   ❌ mystical-adaptations → GAMEPLAY (weight: 75, gameplay caps: ['magic.spellcasting', 'crafting.expansion'])
+   ❌ silent-gear → GAMEPLAY (weight: 75, gameplay caps: ['crafting.expansion'])
+   ❌ epic-knightsnmages → GAMEPLAY (weight: 75, gameplay caps: ['magic.spellcasting', 'combat.system'])
+   ❌ wizards-reborn → GAMEPLAY (weight: 75, gameplay caps: ['magic.spellcasting', 'progression.system'])
+   ❌ dis-enchanting-table → GAMEPLAY (weight: 75, gameplay caps: ['crafting.expansion'])
+   ❌ scriptor-magicae → GAMEPLAY (weight: 75, gameplay caps: ['magic.spellcasting', 'tech.energy_system'])
+   ❌ primal-magick → GAMEPLAY (weight: 75, gameplay caps: ['magic.spellcasting', 'magic.rituals'])
+   ❌ blood-magic → GAMEPLAY (weight: 75, gameplay caps: ['magic.spellcasting', 'magic.rituals'])
+   ❌ enchanting-infuser → GAMEPLAY (weight: 75, gameplay caps: ['magic.spellcasting'])
+   ❌ darksmelting → GAMEPLAY (weight: 75, gameplay caps: ['crafting.expansion', 'automation.core'])
+   ⚡ fps-reducer → PERFORMANCE (weight: 90, performance caps: ['memory.footprint', 'sim.optimization'])
+   ⚡ badoptimizations → PERFORMANCE (weight: 90, performance caps: ['memory.footprint', 'sim.optimization'])
+   ⚡ entityculling → PERFORMANCE (weight: 90, performance caps: ['memory.footprint', 'sim.optimization'])
+   ⚡ dynamic-fps → PERFORMANCE (weight: 90, performance caps: ['memory.footprint', 'sim.optimization'])
+   ⚡ flerovium → PERFORMANCE (weight: 90, performance caps: ['memory.footprint', 'sim.optimization'])
+   ⚡ sodium-device-check → PERFORMANCE (weight: 90, performance caps: ['memory.footprint'])
+   ⚡ rubidium → PERFORMANCE (weight: 90, performance caps: ['memory.footprint', 'sim.optimization'])
+   ⚡ ruok → PERFORMANCE (weight: 90, performance caps: ['memory.footprint', 'sim.optimization'])
+   ⚡ fps-boost-tct → PERFORMANCE (weight: 90, performance caps: ['sim.optimization'])
+   ⚡ acceleratedrendering → PERFORMANCE (weight: 90, performance caps: ['memory.footprint', 'sim.optimization'])
+   ⚡ exordium → PERFORMANCE (weight: 90, performance caps: ['memory.footprint', 'sim.optimization'])
+   ⚡ ferrite-core → PERFORMANCE (weight: 90, performance caps: ['memory.footprint', 'sim.optimization'])
+   🎨 reflex-antilag → GRAPHICS (weight: 90, graphics caps + graphics context: ['render.pipeline'])
+   ⚡ immediatelyfast → PERFORMANCE (weight: 90, performance caps: ['memory.footprint', 'sim.optimization'])
+   ⚡ distanthorizons → PERFORMANCE (weight: 90, performance caps: ['memory.footprint'])
+   ❌ gputape → GAMEPLAY (weight: 80, graphics + gameplay summary: ['craft'])
+   🎨 superresolution → GRAPHICS (weight: 90, graphics caps + graphics context: ['shaders.runtime', 'render.pipeline'])
+   ❌ fps-monitor → GAMEPLAY (weight: 70, ui caps: ['ui.hud.overlay'])
+   ⚡ saturn → PERFORMANCE (weight: 90, performance caps: ['memory.footprint', 'sim.optimization'])
+   ⚡ idle-boost → PERFORMANCE (weight: 90, performance caps: ['memory.footprint', 'sim.optimization'])
+   ⚡ particle-core → PERFORMANCE (weight: 90, performance caps: ['sim.optimization'])
+   ⚡ achievements-optimizer → PERFORMANCE (weight: 90, performance caps: ['tick.smoothing'])
+   ⚡ gnetum → PERFORMANCE (weight: 90, performance caps: ['memory.footprint'])
+   ⚡ krypton-fnp → PERFORMANCE (weight: 90, performance caps: ['network.optimization'])
+   ⚡ redirector → PERFORMANCE (weight: 90, performance caps: ['memory.footprint', 'sim.optimization'])
+   ⚡ radium → PERFORMANCE (weight: 90, performance caps: ['memory.footprint', 'sim.optimization'])
+   ❌ the-afterdark → GAMEPLAY (weight: 75, gameplay caps: ['worldgen.biomes', 'worldgen.structures'])
+   ⚡ memoryleakfix → PERFORMANCE (weight: 90, performance caps: ['memory.footprint', 'sim.optimization'])
+   ❌ cameraoverhaul → GAMEPLAY (weight: 70, ui caps: ['ui.hud.overlay', 'ui.keybind.manager'])
+   ⚡ vmp-forge → PERFORMANCE (weight: 90, performance caps: ['memory.footprint', 'sim.optimization'])
+   ❌ unlit-campfire → GAMEPLAY (weight: 80, graphics + gameplay tags: ['building-blocks', 'decorative-blocks'], gameplay summary: ['item', 'items'])
+   ❌ dynamic-electricity → GAMEPLAY (weight: 75, tech integration (not library): ['compatibility.integration'])
+   ✅ sodium-options-mod-compat → LIBRARY (weight: 90, library tags: ['library', 'api'])
+   ⚡ mc1.16.5-sodium-chinese-localization-pack → PERFORMANCE (weight: 90, performance caps: ['memory.footprint'])
+   ⚡ sodium-extras → PERFORMANCE (weight: 90, performance caps: ['sim.optimization'])
+   ⚡ occlusion-culling-fix-sodium → PERFORMANCE (weight: 90, performance caps: ['memory.footprint', 'culling.entities'])
+   ⚡ chloride → PERFORMANCE (weight: 90, performance caps: ['memory.footprint', 'culling.entities'])
+   ⚡ xenon-forge → PERFORMANCE (weight: 90, performance caps: ['memory.footprint', 'sim.optimization'])
+   🎨 createbetterfps → GRAPHICS (weight: 90, graphics caps + graphics context: ['shaders.runtime', 'render.pipeline'])
+   ⚡ embeddium → PERFORMANCE (weight: 90, performance caps: ['memory.footprint', 'sim.optimization'])
+   ❌ tipthescales → GAMEPLAY (weight: 70, ui caps: ['ui.hud.overlay', 'ui.menu.extension'])
+   ⚡ bbrb → PERFORMANCE (weight: 90, performance caps: ['memory.footprint', 'sim.optimization'])
+   ✅ sodium-options-api → LIBRARY (weight: 90, library tags: ['library', 'api'])
+   🎨 yuushya-modelling → GRAPHICS (weight: 90, graphics caps + graphics context: ['render.pipeline'])
+   ❌ wi-zoom → GAMEPLAY (weight: 70, ui caps: ['ui.hud.overlay', 'ui.keybind.manager'])
+   🎨 sodium-dynamic-lights → GRAPHICS (weight: 90, graphics caps + graphics context: ['render.pipeline', 'lighting.system'])
+   ❌ yungs-cave-biomes → GAMEPLAY (weight: 75, gameplay caps: ['worldgen.biomes', 'worldgen.terrain'])
+   🎨 mekanism-covers → GRAPHICS (weight: 90, graphics caps + graphics context: ['shaders.runtime', 'render.pipeline'])
+   ❌ just-enough-mekanism-multiblocks → GAMEPLAY (weight: 75, tech integration (not library): ['compatibility.integration'])
+   🎨 connected-glass → GRAPHICS (weight: 90, graphics caps + graphics context: ['render.pipeline', 'ctm.connected_textures'])
+   🎨 yuushya-townscape → GRAPHICS (weight: 90, graphics caps + graphics context: ['ctm.connected_textures'])
+   ❌ toms-storage → GAMEPLAY (weight: 75, gameplay caps: ['storage.network', 'crafting.expansion'])
+   ❌ doggy-talents-next → GAMEPLAY (weight: 75, gameplay caps: ['progression.system'])
+   ✅ yacl → LIBRARY (weight: 90, library tags: ['library', 'api'])
+   🎨 exposure → GRAPHICS (weight: 90, graphics caps + graphics context: ['postprocessing.pipeline'])
+   🎨 immersive-lanterns → GRAPHICS (weight: 90, graphics caps + graphics context: ['lighting.system'])
+   ❌ lithosphere → GAMEPLAY (weight: 75, gameplay caps: ['worldgen.biomes', 'worldgen.terrain'])
+   ❌ nyctophobia-dread → GAMEPLAY (weight: 75, gameplay caps: ['theme.horror', 'combat.system'])
+   ⚡ connectored-c2me-(c2me-fork-for-connector) → PERFORMANCE (weight: 90, performance caps: ['memory.footprint', 'sim.optimization'])
+   ❌ potion-cauldron → GAMEPLAY (weight: 75, gameplay caps: ['crafting.expansion'])
+   ✅ mod-sets → LIBRARY (weight: 80, library caps only: ['modpack.core'])
+   🎨 cosmic-horizons-cosmos → GRAPHICS (weight: 90, graphics caps + graphics context: ['shaders.runtime', 'render.pipeline'])
+   ❌ xaeros-minimap → GAMEPLAY (weight: 70, ui caps: ['ui.hud.overlay', 'ui.minimap'])
+   ❌ xaeros-world-map → GAMEPLAY (weight: 70, ui caps: ['ui.hud.overlay', 'ui.minimap'])
+   ❌ appleskin → GAMEPLAY (weight: 70, ui caps: ['ui.tooltip.enhancement', 'ui.hud.overlay'])
+   🎨 entity-model-features → GRAPHICS (weight: 90, graphics caps + graphics context: ['render.pipeline'])
+   ❌ not-enough-animations → GAMEPLAY (weight: 50, regular mod fallback (no clear indicators))
+   ❌ 3dskinlayers → GAMEPLAY (weight: 50, regular mod fallback (no clear indicators))
+   ✅ jade → LIBRARY (weight: 90, library tags: ['library', 'dependency'])
+   ❌ no-chat-reports → GAMEPLAY (weight: 70, ui caps: ['ui.chat.enhancement'])
+   ❌ simple-voice-chat → GAMEPLAY (weight: 50, regular mod fallback (no clear indicators))
+   ✅ puzzles-lib → LIBRARY (weight: 90, library tags: ['core-mod', 'library'])
+   ✅ forge-config-api-port → LIBRARY (weight: 90, library tags: ['core-mod', 'library'])
+   ✅ balm → LIBRARY (weight: 90, library tags: ['core-mod', 'library'])
+   ✅ geckolib → LIBRARY (weight: 90, library tags: ['library', 'api'])
+   ❌ mouse-tweaks → GAMEPLAY (weight: 70, ui caps: ['ui.inventory.helper'])
+   ❌ chat-heads → GAMEPLAY (weight: 70, ui caps: ['ui.chat.enhancement'])
+   ✅ melody → LIBRARY (weight: 90, library tags: ['library', 'dependency'])
+   🎨 modelfix → GRAPHICS (weight: 90, graphics caps + graphics context: ['render.pipeline'])
+   ⚡ debugify → PERFORMANCE (weight: 90, performance caps: ['sim.optimization'])
+   ✅ architectury-api → LIBRARY (weight: 95, library tags: ['core-mod', 'library'])
+   ✅ cloth-config → LIBRARY (weight: 95, library tags: ['library', 'api'])
+   ✅ clockworklib → LIBRARY (weight: 95, library tags: ['core-mod', 'library'])
+   ✅ coroutil → LIBRARY (weight: 95, library tags: ['core-mod', 'library'])
+   ❌ the-lost-cities → GAMEPLAY (weight: 70, gameplay caps: ['worldgen.structures', 'worldgen.terrain'])
+   ❌ immersive-weathering → GAMEPLAY (weight: 70, gameplay caps: ['worldgen.terrain'])
+   ✅ moonlight → LIBRARY (weight: 95, library tags: ['core-mod', 'library'])
+   ✅ playeranimator → LIBRARY (weight: 95, library tags: ['library', 'api'])
+   ✅ yungs-api → LIBRARY (weight: 95, library tags: ['core-mod', 'library'])
+   ✅ curios → LIBRARY (weight: 95, library tags: ['library', 'api'])
+   ✅ crust → LIBRARY (weight: 95, library tags: ['library', 'api'])
+   ✅ fabridge → LIBRARY (weight: 95, library tags: ['core-mod', 'library'])
+   🎨 aaa-particles → GRAPHICS (weight: 100, graphics caps: ['particles.system'])
+   ❌ timeless-and-classics-zero → GAMEPLAY (weight: 70, gameplay caps: ['combat.system', 'theme.realistic'])
+   ✅ majrusz-library → LIBRARY (weight: 95, library tags: ['core-mod', 'library'])
+   ❌ terrafirmacraft → GAMEPLAY (weight: 70, gameplay caps: ['progression.system', 'difficulty.scaling'])
+   ❌ mystical-agriculture → GAMEPLAY (weight: 70, gameplay caps: ['crafting.expansion'])
+   ❌ mystical-agradditions → GAMEPLAY (weight: 70, gameplay caps: ['crafting.expansion'])
+   ❌ ars-nouveau → GAMEPLAY (weight: 70, gameplay caps: ['magic.spellcasting', 'automation.core'])
+   🎨 fluffy-fur → GRAPHICS (weight: 100, graphics caps: ['render.pipeline'])
+   ✅ patchouli → LIBRARY (weight: 95, library tags: ['library', 'dependency'])
+   ✅ fzzy-config → LIBRARY (weight: 95, library tags: ['library', 'api'])
+   ✅ kotlin-for-forge → LIBRARY (weight: 95, library tags: ['core-mod', 'library'])
+   ✅ voltaic → LIBRARY (weight: 95, library tags: ['library', 'api'])
+   ❌ electrodynamics → GAMEPLAY (weight: 70, gameplay caps: ['tech.energy_system', 'tech.machines'])
+   ❌ mekanism → GAMEPLAY (weight: 70, gameplay caps: ['tech.energy_system', 'tech.machines'])
+   ✅ accessories → LIBRARY (weight: 85, library caps: ['compatibility.integration', 'api.exposed'], only worldgen: [])
+   ✅ txnilib → LIBRARY (weight: 95, library tags: ['core-mod', 'library'])
+   ✅ kinecraft → LIBRARY (weight: 95, library tags: ['library', 'api'])
+   🎨 entitytexturefeatures → GRAPHICS (weight: 100, graphics caps: ['ctm.connected_textures'])
+   🔍 Found library category by capabilities: 'Royal Archives'
+   🔍 Found performance category by capabilities: 'Performance Core'
+   🔍 Found graphics category by capabilities: 'Visual Optimization'
+   📚 Placed 24 API libraries into 'Royal APIs'
+   📚 Placed 2 core libraries into 'Royal Core'
+   📚 Placed 3 other libraries into 'Royal Archives'
+   🔍 DEBUG: graphics_category='Visual Optimization', len(graphics_mods)=16
+   🎨 Placed 16 graphics mods into 'Visual Optimization'
+   🔍 DEBUG: performance_category='Performance Core', len(performance_mods)=40
+   🔍 Performance mods found: Noisium, ModernFix, ReTargetato, Big Brain, SmartBrainLib
+      ... and 35 more
+   ⚡ Placed 40 performance mods into 'Performance Core'
+   🤖 Distributing 112 gameplay mods via AI...
+   ✅ Batch 1/6: 20/20 mods assigned
+   ✅ Batch 2/6: 20/20 mods assigned
+   ✅ Batch 3/6: 20/20 mods assigned
+   ✅ Batch 4/6: 20/20 mods assigned
+   ✅ Batch 5/6: 20/20 mods assigned
+   ✅ Batch 6/6: 12/12 mods assigned
+
+✅ [Mod Distribution] AI distribution complete
+   Categories with mods: 25
+
+🔍 [Validation] Checking distribution quality...
+   ✅ All mods assigned
+   ⚠️  2 empty categories: Startup Acceleration, Combat Enhancement
+   ⚠️  2 overloaded categories (20+ mods):
+      - Royal APIs: 24 mods (consider splitting)
+      - Performance Core: 40 mods (consider splitting)
+
+📊 [Distribution Summary]
+   Total mods: 197
+   • Performance Core: 40 mods (20.3%)
+   • Royal APIs: 24 mods (12.2%)
+   • Visual Optimization: 16 mods (8.1%)
+   • Zombie Variants: 15 mods (7.6%)
+   • Medieval Mysticism: 15 mods (7.6%)
+   • Other 20 categories: 87 mods (44.2%)
+
+✅ [Mod Distribution] Validation complete
+================================================================================
+📝 MODPACK SUMMARY GENERATOR
+================================================================================
+🤖 Calling DeepSeek AI for summary generation...
+   📊 Categories: 25
+   📦 Total mods: 197
+✅ AI response received
+   💰 Tokens: 3158, Cost: $0.000853
+
+📝 Generated Summary:
+   Title: Medieval Zombie Survival
+   Categories described: 25
+   Key features: 5
+
+✅ [Build Updated] Title: Medieval Zombie Survival
+[OK] Generated board_state.json with 197 mods and 25 categories
+
+================================================================================
+⏱️  [TIMING SUMMARY]
+================================================================================
+   Mod Selection                  168.40s ( 39.1%)
+   Mod Distribution               161.81s ( 37.6%)
+   Architecture Refiner            62.45s ( 14.5%)
+   Modpack Summary                 34.05s (  7.9%)
+   Dependency Resolution            0.69s (  0.2%)
+   Fabric Compatibility             0.00s (  0.0%)
+--------------------------------------------------------------------------------
+   TOTAL                          430.85s (100.0%)
+================================================================================
+
+[REQUEST] OPTIONS /api/ai/build-board from 127.0.0.1
+   Origin: http://tauri.localhost
+   Referer: http://tauri.localhost/
+   Headers: Accept=*/*, Content-Type=N/A
+   Authorization: Missing
+
+[REQUEST] POST /api/ai/build-board from 127.0.0.1
+   Origin: http://tauri.localhost
+   Referer: http://tauri.localhost/
+   Headers: Accept=text/event-stream, Content-Type=application/json
+   Authorization: Present
+   Body keys: ['prompt', 'mc_version', 'mod_loader', 'current_mods', 'max_mods']
+   Prompt: Create a fully optimized Minecraft modpack concept...
+
+[REQUIRE_SUBSCRIPTION] POST /api/ai/build-board
+   Authorization header: Present
+[Auth] Verifying JWT token (preview: eyJhbGciOiJIUzI1NiIsImtpZCI6Im...)
+[OK] [Auth] JWT token verified, user_id: 457ffa7a-fb41-4251-8bd6-6d0d6facd10b
+[OK] [Auth] Allowed test user 457ffa7a-fb41-4251-8bd6-6d0d6facd10b to /api/ai/build-board
+
+================================================================================
+[BUILD-BOARD] POST request received!
+================================================================================
+[BUILD-BOARD] Accept header: text/event-stream, SSE mode: True
+
+================================================================================
+[SSE BUILD] Starting SSE stream...
+   Prompt: Create a fully optimized Minecraft modpack concept tailored for a laptop with an i5-6100 CPU and 8GB RAM. The modpack must run smoothly and be carefully optimized. Theme: Hardcore Medieval Zombie Apocalypse SMP.  Core Requirements  Medieval-themed world — no modern guns, no city apocalypse, no modern tech.  Technology must exist, but only in a primitive, tribal, medieval or early-industrial style, similar to Doctor Stone-level tech.  No solar panels, no futuristic items.  Mechanical, gear-based, windmill/watermill systems are allowed.  Magic system must be full-featured, using:  Dark magic  Classic medieval Merlin/Camelot-style magic  Zombie Behavior (very important)  Extremely intelligent AI.  Zombies must:  Break blocks  Track players using sound  Get attracted to light sources  Detect sound or light from very long distances  Spawn in massive hordes (50–100 units)  During night, visibility becomes so low that players feel almost blind.  Light sources provide very weak illumination.  Special giant zombie “brute” monsters appear:  Hidden in dark forests  Rarely spawning  Also appear during Blood Moons  Blood Moon System  Blood Moons trigger massive zombie invasions.  Hordes automatically move toward bases.  Players must defend their settlements from siege-like attacks.  World & Atmosphere  Large, open-world map.  Environment must be:  Dark, cold, harsh  Forest-heavy and frightening  No villages or normal structures.  Acceptable structure generation:  Abandoned medieval castles  Ruined strongholds  Large walls or “beyond the wall” style terrain (inspired by Game of Thrones)  Tribal SMP Gameplay  World designed for multiple tribes (groups of players).  Tribes are:  Sometimes hostile  Sometimes forced to cooperate for survival  Cooperation becomes necessary:  To trade food  To exchange primitive technology  To survive massive zombie events  To maintain warmth in extremely cold weather  Progression & Survival  Progression must be slow, difficult, and exhausting.  Technology unlock system must be multi-stage and very challenging.  Advanced tools or machines require effort, trade, or tribal cooperation.  Harsh survival mechanics:  Realistic hunger  Severe cold/heat requirement (temperature survival)  Limited resources  Combat & Equipment  Weapons must be medieval:  Swords  Spears  Shields  Bows  Siege-like defensive tools  Optional:  Mechanical turrets (primitive/gear-based only)  Defensive medieval fortifications  Overall Goal  Create a modpack concept that forces players to:  Stay inside safe bases  Fear venturing into darkness  Cooperate or fight other tribes  Survive overwhelming zombie threats  Slowly build primitive tech and medieval magic  Defend their tribe like in FALL OUT, but with a medieval setting  The final output should include:  Suggested mods  Compatibility notes  Optimization strategies for low-end hardware  Optional configuration ideas  Recommended AI, zombie, worldgen, magic and tech mods  Final structure of the modpack
+   Current mods: 0
+   Version: 1.20.1, Loader: forge, Max: 150
+================================================================================
+
+[V3] Using V3 Architecture-First
+[SSE] 🤖 Calling build_modpack...
+[SSE] ⏰ Starting heartbeat thread to keep QUIC connection alive...
+================================================================================
+🚀 Starting AI Modpack Builder V3 (Architecture-First)
+================================================================================
+📝 User Prompt: Create a fully optimized Minecraft modpack concept tailored for a laptop with an i5-6100 CPU and 8GB RAM. The modpack must run smoothly and be carefully optimized. Theme: Hardcore Medieval Zombie Apocalypse SMP.  Core Requirements  Medieval-themed world — no modern guns, no city apocalypse, no modern tech.  Technology must exist, but only in a primitive, tribal, medieval or early-industrial style, similar to Doctor Stone-level tech.  No solar panels, no futuristic items.  Mechanical, gear-based, windmill/watermill systems are allowed.  Magic system must be full-featured, using:  Dark magic  Classic medieval Merlin/Camelot-style magic  Zombie Behavior (very important)  Extremely intelligent AI.  Zombies must:  Break blocks  Track players using sound  Get attracted to light sources  Detect sound or light from very long distances  Spawn in massive hordes (50–100 units)  During night, visibility becomes so low that players feel almost blind.  Light sources provide very weak illumination.  Special giant zombie “brute” monsters appear:  Hidden in dark forests  Rarely spawning  Also appear during Blood Moons  Blood Moon System  Blood Moons trigger massive zombie invasions.  Hordes automatically move toward bases.  Players must defend their settlements from siege-like attacks.  World & Atmosphere  Large, open-world map.  Environment must be:  Dark, cold, harsh  Forest-heavy and frightening  No villages or normal structures.  Acceptable structure generation:  Abandoned medieval castles  Ruined strongholds  Large walls or “beyond the wall” style terrain (inspired by Game of Thrones)  Tribal SMP Gameplay  World designed for multiple tribes (groups of players).  Tribes are:  Sometimes hostile  Sometimes forced to cooperate for survival  Cooperation becomes necessary:  To trade food  To exchange primitive technology  To survive massive zombie events  To maintain warmth in extremely cold weather  Progression & Survival  Progression must be slow, difficult, and exhausting.  Technology unlock system must be multi-stage and very challenging.  Advanced tools or machines require effort, trade, or tribal cooperation.  Harsh survival mechanics:  Realistic hunger  Severe cold/heat requirement (temperature survival)  Limited resources  Combat & Equipment  Weapons must be medieval:  Swords  Spears  Shields  Bows  Siege-like defensive tools  Optional:  Mechanical turrets (primitive/gear-based only)  Defensive medieval fortifications  Overall Goal  Create a modpack concept that forces players to:  Stay inside safe bases  Fear venturing into darkness  Cooperate or fight other tribes  Survive overwhelming zombie threats  Slowly build primitive tech and medieval magic  Defend their tribe like in FALL OUT, but with a medieval setting  The final output should include:  Suggested mods  Compatibility notes  Optimization strategies for low-end hardware  Optional configuration ideas  Recommended AI, zombie, worldgen, magic and tech mods  Final structure of the modpack
+🎮 Version: 1.20.1, Loader: forge
+📦 Current mods: 0, Max new mods: 150
+
+🆔 Pipeline ID: a54511c5-7597-496b-8506-f9ae25a73658
+
+🔧 Fabric Compatibility Mode: DISABLED
+   → Only accepting forge mods
+
+[LAYER 0] Query Planner
+--------------------------------------------------------------------------------
+🧠 [Query Planner] Analyzing user request...
+📥 [Query Planner] Received response
+   📊 Tokens: 2,656 (prompt: 2,251, completion: 405)
+   💵 Cost: $0.000429
+✅ [Query Planner] Created search plan:
+   Strategy: hybrid
+   Queries: 6
+   Target candidates: 300
+
+🏗️  [V3] THEMED MODPACK FLOW - Architecture-First
+================================================================================
+
+[STEP 0] Baseline Mods Loader
+--------------------------------------------------------------------------------
+
+📌 [Baseline Loader] Loading baseline mods from database...
+   🔄 Loading mods for client-side filtering...
+   📦 Loaded 1000 mods from DB
+   🔍 Found 50 mods with baseline-mod tag after filtering
+   📊 Fetched 50 mods with baseline-mod tag
+   🚫 Excluded 13 fabric-api mods (hard exclusion for forge)
+   🚫 Excluded 1 mods requiring FFAPI (fabric compat mode disabled)
+   ⛔ Filtered out 9 mods (incompatible with forge)
+   ✅ Loaded 27 compatible baseline mods
+      • Entity Culling
+      • FerriteCore
+      • ImmediatelyFast
+      • YetAnotherConfigLib (YACL)
+      • Xaero's Minimap
+      • Xaero's World Map
+      • AppleSkin
+      • ModernFix
+      • [EMF] Entity Model Features
+      • Not Enough Animations
+      ... and 17 more
+
+[LAYER 1.5] Architecture Planner
+--------------------------------------------------------------------------------
+🔍 [Architecture Planner] Searching for reference modpacks...
+   Query: "Create a fully optimized Minecraft modpack concept..."
+   → Found 5 reference modpacks with valid architectures
+   1. Zombie Apocalypse (similarity: 0.777)
+      → 42 capabilities, 42 provider groups
+      → Versions: 1.20.1...
+   2. Zombie Invade 100 Days (similarity: 0.731)
+      → 44 capabilities, 44 provider groups
+      → Versions: 1.20.1...
+   3. Day of the Dead (Zombie Apocalypse) (similarity: 0.731)
+      → 48 capabilities, 48 provider groups
+      → Versions: 1.20.1...
+   4. Guns and Zombies (similarity: 0.723)
+      → 34 capabilities, 34 provider groups
+      → Versions: 1.20.1...
+   5. Zombie Survivalist (similarity: 0.718)
+      → 54 capabilities, 54 provider groups
+      → Versions: 1.20.1...
+
+📊 [Architecture Planner] Extracting capability patterns...
+   Top capabilities across 5 reference modpacks:
+   • api.exposed: 5/5 modpacks
+   • combat.system: 5/5 modpacks
+   • compatibility.bridge: 5/5 modpacks
+   • crafting.expansion: 5/5 modpacks
+   • ctm.connected_textures: 5/5 modpacks
+   • culling.entities: 5/5 modpacks
+   • dependency.library: 5/5 modpacks
+   • difficulty.scaling: 5/5 modpacks
+   • lighting.system: 5/5 modpacks
+   • memory.footprint: 5/5 modpacks
+
+🔍 [Architecture Planner] Analyzing baseline mod distribution in reference modpacks...
+   Top capabilities in baseline mods:
+   • sim.optimization: 9 baseline mods
+   • memory.footprint: 7 baseline mods
+   • dependency.library: 6 baseline mods
+   • api.exposed: 5 baseline mods
+   • render.pipeline: 4 baseline mods
+   • ui.hud.overlay: 4 baseline mods
+   • visual.effects: 4 baseline mods
+   • ui.minimap: 2 baseline mods
+   • ui.tooltip.enhancement: 2 baseline mods
+   • startup.optimization: 2 baseline mods
+   📊 Baseline mods frequently appear in these capabilities:
+   • api.exposed: appears in 5 reference modpacks
+   • dependency.library: appears in 5 reference modpacks
+   • memory.footprint: appears in 5 reference modpacks
+   • render.pipeline: appears in 5 reference modpacks
+   • sim.optimization: appears in 5 reference modpacks
+
+📝 [Architecture Planner] Planning modpack architecture...
+   📊 Dynamic category calculation:
+      Base: 12, Capability diversity: 6.3, Prompt complexity: 4.5, Reference diversity: 1.0
+      → Target: 20 categories
+📥 [Architecture Planner] Received plan
+   📊 Tokens: 4,057 (prompt: 2,488, completion: 1,569)
+   💵 Cost: $0.000788
+✅ [Architecture Planner] Planned 20 categories:
+   📚 Dark Ages Foundation: 8 mods (target)
+      Required: api.exposed, dependency.library, compatibility.bridge
+   📚 Performance Sanctuary: 6 mods (target)
+      Required: sim.optimization, memory.footprint, server.optimization
+   📚 Undead Legion: 7 mods (target)
+      Required: combat.system, difficulty.scaling
+   📚 Blood Moon Siege: 5 mods (target)
+      Required: combat.system, difficulty.scaling
+   📚 Ancient Forge: 9 mods (target)
+      Required: crafting.expansion, automation.core
+   📚 Arcane Arts: 8 mods (target)
+      Required: magic.system, crafting.expansion
+   📚 Knight's Arsenal: 7 mods (target)
+      Required: combat.system, crafting.expansion
+   📚 Castle Defenses: 6 mods (target)
+      Required: combat.system, automation.core
+   📚 Forgotten Realms: 8 mods (target)
+      Required: worldgen.structures, theme.realistic
+   📚 Shadowed Forests: 6 mods (target)
+      Required: worldgen.biomes, difficulty.scaling
+   📚 Tribal Survival: 7 mods (target)
+      Required: survival.mechanics, difficulty.scaling
+   📚 Clan Diplomacy: 5 mods (target)
+      Required: multiplayer.enhancement, social.systems
+   📚 Eternal Darkness: 6 mods (target)
+      Required: lighting.system, difficulty.scaling
+   📚 Grim Visuals: 7 mods (target)
+      Required: render.pipeline, ctm.connected_textures
+   📚 Mechanical Ingenuity: 6 mods (target)
+      Required: automation.core, crafting.expansion
+   📚 Ancient Bestiary: 7 mods (target)
+      Required: mob.variety, difficulty.scaling
+   📚 Siege Engineering: 5 mods (target)
+      Required: automation.core, combat.system
+   📚 Warlord's Interface: 5 mods (target)
+      Required: ui.hud.overlay, ui.chat.enhancement
+   📚 Frostbite Survival: 6 mods (target)
+      Required: survival.mechanics, difficulty.scaling
+   📚 Apocalypse Chronicles: 7 mods (target)
+      Required: progression.system, crafting.expansion
+   🎯 Total target: 131 mods
+
+[LAYER 1] Hybrid Search (capability-filtered)
+--------------------------------------------------------------------------------
+   🎯 Required capabilities: 24
+   ⭐ Preferred capabilities: 36
+🔍 [Hybrid Search] Executing search plan...
+   🔎 SEMANTIC query: "medieval zombie apocalypse hardcore survival triba..." (weight=0.9)
+      → Found 40 mods
+   🔎 SEMANTIC query: "intelligent zombies break blocks track players hor..." (weight=0.8)
+      → Found 40 mods
+   🔎 SEMANTIC query: "primitive technology mechanical gear medieval magi..." (weight=0.7)
+      → Found 40 mods
+   🔎 SEMANTIC query: "performance optimization FPS low-end hardware lapt..." (weight=0.6)
+      → Found 40 mods
+   🔎 KEYWORD query: "sodium lithium modernfix entityculling dynamic-fps..." (weight=0.8)
+   🚫 Skipped 3 mod(s) with FFAPI dependency
+      → Found 150 mods
+   🔎 KEYWORD query: "zombie ai horde blood moon siege..." (weight=0.7)
+   🚫 Skipped 2 mod(s) with FFAPI dependency
+      → Found 150 mods
+🔗 [Hybrid Search] Fusing 460 results...
+   → 387 unique mods after fusion
+🔧 [Hybrid Search] Applying filters...
+   🔧 Filters: min_downloads=5000, required_capabilities={'api.exposed', 'dependency.library', 'render.pipeline', 'lighting.system', 'mob.variety', 'worldgen.structures', 'social.systems', 'automation.core', 'magic.system', 'multiplayer.enhancement', 'theme.realistic', 'compatibility.bridge', 'sim.optimization', 'worldgen.biomes', 'ctm.connected_textures', 'server.optimization', 'crafting.expansion', 'progression.system', 'memory.footprint', 'ui.hud.overlay', 'combat.system', 'survival.mechanics', 'difficulty.scaling', 'ui.chat.enhancement'}
+   ⏭️  Skipped (incompatible): sodium ↔️ exordium
+   ⏭️  Skipped (low downloads): noconsolespam - 1339 < 5000
+   ⏭️  Skipped (low downloads): ocelotfix - 4543 < 5000
+   ⏭️  Skipped (incompatible): rubidium-extra ↔️ exordium
+   ⏭️  Skipped (low downloads): stutterfix-refurbished - 2953 < 5000
+   → 253 mods after filtering
+🎨 [Hybrid Search] Ensuring diversity...
+   → 208 mods after diversity check
+✅ [Hybrid Search] Returning 208 candidates
+
+[LAYER 2] Final Selector (architecture-aware)
+--------------------------------------------------------------------------------
+🎯 [Final Selector] Selecting best 150 mods from 208 candidates...
+   📌 [Baseline] Adding 27 baseline mods automatically...
+   ✅ Baseline mods to include: Entity Culling, FerriteCore, ImmediatelyFast, YetAnotherConfigLib (YACL), Xaero's Minimap
+      ... and 22 more
+   ℹ️  Baseline mods are NOT counted in mod limit (they're the foundation)
+   📋 All candidates (208 mods):
+      1. Noisium (noisium)
+      2. ModernFix (modernfix)
+      3. Undead Nights - Zombie Horde Nights (undead-nights)
+      4. Zombies Reworked (zombies-reworked)
+      5. Sculk Horde (sculk-horde)
+      6. Zombie Nightmare Expansions - Undead Horror Monsters (zoniex)
+      7. Zombies+ (zombies-plus-frenzied-horde)
+      8. Zombie Horsemen (zombie-horsemen)
+      9. We Got Runners! (we-got-runners!)
+      10. Zombies More (zombies-more)
+      11. Mebahel's Zombie Horde (mebahels-zombie-horde)
+      12. Zombie Horse Spawn (zombie-horse-spawn)
+      13. The Undead Revamped (the-undead-revamped)
+      14. Zombie Awareness (zombie-awareness)
+      15. Mo' Zombies Wave (mo-zombies-wave)
+      16. Horde Nights (blood-moon)
+      17. zombie siege (Guns in minecraft loot chests) (zombie-siege-(guns-in-minecraft-loot-chests))
+      18. zombie siege (Content pack) (zombie-siege-(content-pack))
+      19. Apocalypse Rebooted (apocalypse-rebooted)
+      20. Lunar (lunar)
+      ... and 188 more
+   🔍 [Preselect] Filtering 208 candidates by architecture...
+   📚 Found 23 libraries, 185 gameplay mods
+   ✂️  Preselected 50 candidates (was 208)
+   📋 Preselected candidates (50 mods):
+      1. Palladium (mpalladium)
+      2. SmartBrainLib (smartbrainlib)
+      3. Chance Cubes (chance-cubes)
+      4. FerriteCore (ferrite-core)
+      5. GPUBooster (gputape)
+      6. moonstone (moonstone)
+      7. Redirector (redirector)
+      8. Biomantic Delight (bio-delight)
+      9. 📚 CrescentLib • [Port] (crescentlib-port)
+      10. Hit Feedback (hit-feedback)
+      11. Moonlight Lib (moonlight)
+      12. Palladium (threetag-palladium)
+      13. Liquid Burner (liquid-burner)
+      14. Tinkers' Thinking (tinkers-thinking)
+      15. InsaneLib (insanelib)
+      16. Noisium (noisium)
+      17. Radium (radium)
+      18. Memory Leak Fix (memoryleakfix)
+      19. Chloride (Embeddium++/Sodium++) (chloride)
+      20. Embeddium (embeddium)
+      ... and 30 more
+   ⚡ Fast path 2: after preselect 50 <= 150, skipping AI
+✅ [Library Check] Libraries already present
+
+[DATA ENRICHMENT] Fetching full mod data...
+--------------------------------------------------------------------------------
+💾 [Data Enrichment] Fetching full data for 73 mods...
+✅ [Data Enrichment] Complete: 73 mods enriched
+
+
+================================================================================
+✅ AI Modpack Builder V3 Complete
+================================================================================
+📦 Selected: 73 mods
+💡 Explanation: Architecture-based preselect, AI skipped for efficiency...
+
+Pipeline a54511c5... executed:
+  • Candidates: 208
+  • AI Selected: 73
+  • Dependencies: 0
+  • Total Mods: 0
+  • AI Calls: 3
+  • Tokens Used: 6,713
+  • Est. Cost: $0.0012
+
+[SSE] ✅ AI selection complete in 112.5s: 73 mods selected
+================================================================================
+🔗 [Dependency Resolver] Resolving required dependencies...
+================================================================================
+🔍 Filtering selected mods by loader compatibility...
+🔥 Resolving conflicts by popularity...
+
+📦 Collecting required dependencies...
+   🔍 Found 14 unique dependencies to fetch
+   ℹ️  Skipped 72 dependencies (optional/already selected/version mismatch)
+      - Palladium → CYQ7VYrM... (version mismatch: ['1.21.5', '1.21.6', '1.21.7', '1.21.8'])
+      - Palladium → mOgUt4GM... (optional)
+      - Palladium → YL57xq9U... (optional)
+      - Palladium → P7dR8mSH... (version mismatch: ['1.21.5', '1.21.6', '1.21.7', '1.21.8'])
+      - GPUBooster → JNRr4jji... (optional)
+      - Palladium → Zw7fMbBg... (optional)
+      - Palladium → t5W7Jfwy... (optional)
+      - Palladium → umyGl7zF... (optional)
+      - Palladium → 5aaWibi9... (optional)
+      - Palladium → 8BmcQJ2H... (optional)
+      ... and 62 more
+   🚀 Fetching all dependencies in one batch...
+   ✅ Fetched 14/14 mods from DB
+
+🔧 Processing dependencies...
+   🔍 Palladium
+      ⏭️  CYQ7VYrM... - version mismatch (required: ['1.21.5', '1.21.6', '1.21.7', '1.21.8'], got: 1.20.1)
+      ⏭️  mOgUt4GM... is optional dependency
+      ⏭️  YL57xq9U... is optional dependency
+      ⏭️  P7dR8mSH... - version mismatch (required: ['1.21.5', '1.21.6', '1.21.7', '1.21.8'], got: 1.20.1)
+   🔍 SmartBrainLib
+   🔍 Chance Cubes
+   🔍 FerriteCore
+   🔍 GPUBooster
+      ⏭️  JNRr4jji... already in selected mods
+   🔍 moonstone
+      ✅ Curios API (source_id: vvuO3ImH...)
+   🔍 Redirector
+   🔍 Biomantic Delight
+      ✅ Biomancy (source_id: uAAuyU4M...)
+   🔍 📚 CrescentLib • [Port]
+   🔍 Hit Feedback
+      ✅ Architectury API (source_id: lhGA9TYQ...)
+   🔍 Moonlight Lib
+      ⏭️  Fabric API - Not available for forge (only for: fabric)
+   🔍 Palladium
+      ⏭️  Zw7fMbBg... is optional dependency
+      ⏭️  t5W7Jfwy... is optional dependency
+      ⏭️  umyGl7zF... is optional dependency
+      ⏭️  5aaWibi9... is optional dependency
+      ⏭️  8BmcQJ2H... already in selected mods
+   🔍 Liquid Burner
+      ⏭️  Xbc0uyRg... - version mismatch (required: ['1.20.2'], got: 1.20.1)
+   🔍 Tinkers' Thinking
+      ✅ Tinkers' Construct (source_id: rxIIYO6c...)
+   🔍 InsaneLib
+   🔍 Noisium
+   🔍 Radium
+      ⏭️  qa2H4BS9... is optional dependency
+   🔍 Memory Leak Fix
+   🔍 Chloride (Embeddium++/Sodium++)
+      ⏭️  AANobbMI... - version mismatch (required: ['1.21.1'], got: 1.20.1)
+      ⏭️  sk9rgfiA... already in selected mods
+   🔍 Embeddium
+   🔍 Very Many Players (Forge)
+   🔍 Moonlit Performance Enhancement Module
+   🔍 Sodium Extras
+      ⏭️  Sodium - Not available for forge (only for: fabric, neoforge, quilt)
+      ⏭️  Fabric API - Not available for forge (only for: fabric)
+      ✅ Sodium Options API (source_id: Es5v4eyq...)
+      ⏭️  sk9rgfiA... already in selected mods
+   🔍 CravenCraft's Bloody Bits
+   🔍 Fog
+      ⏭️  SNVQ2c0g... - version mismatch (required: ['1.21.9', '1.21.10'], got: 1.20.1)
+      ⏭️  Architectury API already added as dependency
+      ⏭️  1eAoo2KR... already in selected mods
+      ⏭️  P7dR8mSH... - version mismatch (required: ['1.21.9', '1.21.10'], got: 1.20.1)
+   🔍 More Mobs
+      ⏭️  eUw8l2Vi... is optional dependency
+      ⏭️  Quilted Fabric API (QFAPI) / Quilt Standard Libraries (QSL) - Not available for forge (only for: quilt)
+      ⏭️  codAaoxh... is optional dependency
+      ⏭️  mOgUt4GM... is optional dependency
+      ⏭️  Fabric API - Not available for forge (only for: fabric)
+   🔍 Sodium Dynamic Lights
+      ⏭️  Fabric API - Not available for forge (only for: fabric)
+      ⏭️  Sodium Options API already added as dependency
+      ⏭️  Sodium - Not available for forge (only for: fabric, neoforge, quilt)
+   🔍 The Hordes
+      ⏭️  iAlZk5aS... is optional dependency
+      ⏭️  G6VHtQr4... - version mismatch (required: ['1.21', '1.21.1'], got: 1.20.1)
+      ⏭️  u6dRKJwZ... is optional dependency
+   🔍 No More Poison with Regeneration
+   🔍 Contagion - A Zombie Infection Mod
+   🔍 Sons of Sins
+   🔍 Butchery
+   🔍 Marium's Soulslike Weaponry
+      ⏭️  8BmcQJ2H... already in selected mods
+      ⏭️  lOOpEntO... - version mismatch (required: ['1.21.1'], got: 1.20.1)
+      ⏭️  AqaIIO6D... - version mismatch (required: ['1.21.1'], got: 1.20.1)
+      ⏭️  P7dR8mSH... - version mismatch (required: ['1.21.1'], got: 1.20.1)
+   🔍 Rotten Creatures
+      ⏭️  i6fiqm5y... - version mismatch (required: ['1.21.1'], got: 1.20.1)
+   🔍 Mutant Monsters
+      ⏭️  QAGBst4M... already in selected mods
+   🔍 Nyctophobia Dread
+   🔍 The Boiled One: Reimagined
+      ⏭️  8BmcQJ2H... already in selected mods
+   🔍 Ballista
+   🔍 PantheonSent
+      ⏭️  lt2zd42r... already in selected mods
+      ⏭️  5aaWibi9... is optional dependency
+   🔍 Tom's Simple Storage Mod
+      ⏭️  tagwiZkJ... is optional dependency
+      ⏭️  nfn13YXA... is optional dependency
+      ⏭️  Orvt0mRa... is optional dependency
+      ⏭️  u6dRKJwZ... is optional dependency
+      ⏭️  5aaWibi9... is optional dependency
+      ⏭️  fRiHVvU7... is optional dependency
+   🔍 ⛏ Mineral Delight • [Port]
+      ✅ Farmer's Delight (source_id: R2OftAxM...)
+      ⏭️  vCPw3wHY... already in selected mods
+   🔍 Mekanism Covers
+      ✅ Mekanism (source_id: Ce6I4WUE...)
+   🔍 ModernFix
+   🔍 Zombie Horse Spawn
+      ⏭️  e0M1UDsY... - version mismatch (required: ['1.21.10'], got: 1.20.1)
+   🔍 Zombie Awareness
+      ✅ CoroUtil (source_id: rLLJ1OZM...)
+   🔍 Mo' Zombies Wave
+   🔍 Lunar
+      ⏭️  Fabric API - Not available for forge (only for: fabric)
+      ✅ Cloth Config API (source_id: 9s6osm5g...)
+   🔍 Enhanced Celestials
+      ⏭️  z2XEADmE... - version mismatch (required: ['1.21.1'], got: 1.20.1)
+      ⏭️  ziOp6EO8... - version mismatch (required: ['1.21.1'], got: 1.20.1)
+   🔍 The Graveyard (FORGE/NEOFORGE)
+      ⏭️  8BmcQJ2H... already in selected mods
+   🔍 Villages&Pillages
+      ⏭️  Fabric API - Not available for forge (only for: fabric)
+      ✅ YUNG's API (source_id: Ua7DFN59...)
+   🔍 Entity Culling
+      ⏭️  Fabric API - Not available for forge (only for: fabric)
+   🔍 ImmediatelyFast
+   🔍 YetAnotherConfigLib (YACL)
+      ⏭️  Fabric API - Not available for forge (only for: fabric)
+   🔍 Xaero's Minimap
+      ⏭️  Fabric API - Not available for forge (only for: fabric)
+      ⏭️  gF3BGWvG... is optional dependency
+   🔍 Xaero's World Map
+      ⏭️  Fabric API - Not available for forge (only for: fabric)
+      ⏭️  gF3BGWvG... is optional dependency
+   🔍 AppleSkin
+      ⏭️  Fabric API - Not available for forge (only for: fabric)
+   🔍 [EMF] Entity Model Features
+      ✅ [ETF] Entity Texture Features (source_id: BVzZfTc1...)
+   🔍 Not Enough Animations
+      ⏭️  Fabric API - Not available for forge (only for: fabric)
+   🔍 Dynamic FPS
+      ⏭️  Cloth Config API already added as dependency
+      ⏭️  Fabric API - Not available for forge (only for: fabric)
+      ⏭️  mOgUt4GM... is optional dependency
+   🔍 3D Skin Layers
+      ⏭️  Fabric API - Not available for forge (only for: fabric)
+   🔍 Jade 🔍
+      ⏭️  u6dRKJwZ... is optional dependency
+      ⏭️  P7dR8mSH... - version mismatch (required: ['1.19.2', '1.18.2'], got: 1.20.1)
+   🔍 No Chat Reports
+      ⏭️  mOgUt4GM... is optional dependency
+      ⏭️  Cloth Config API already added as dependency
+      ⏭️  P7dR8mSH... - version mismatch (required: ['1.21.1'], got: 1.20.1)
+   🔍 Simple Voice Chat
+      ⏭️  UL4bJFDY... is optional dependency
+      ⏭️  SRlzjEBS... is optional dependency
+      ⏭️  YlKdE5VK... is optional dependency
+      ⏭️  Cloth Config API already added as dependency
+      ⏭️  qyVF9oeo... is optional dependency
+      ⏭️  mOgUt4GM... is optional dependency
+      ⏭️  Vebnzrzj... is optional dependency
+      ⏭️  9eGKb6K1... already in selected mods
+   🔍 Puzzles Lib
+      ⏭️  Fabric API - Not available for forge (only for: fabric)
+      ⏭️  ohNO6lps... already in selected mods
+   🔍 Forge Config API Port
+      ⏭️  5WeWGLoJ... is optional dependency
+      ⏭️  Fabric API - Not available for forge (only for: fabric)
+      ⏭️  mOgUt4GM... is optional dependency
+   🔍 Balm
+      ⏭️  Fabric API - Not available for forge (only for: fabric)
+      ⏭️  Cloth Config API already added as dependency
+   🔍 Geckolib
+      ⏭️  Fabric API - Not available for forge (only for: fabric)
+   🔍 Mouse Tweaks
+      ⏭️  Fabric API - Not available for forge (only for: fabric)
+      ⏭️  mOgUt4GM... is optional dependency
+   🔍 Chat Heads
+      ⏭️  Cloth Config API already added as dependency
+   🔍 Melody
+      ⏭️  Fabric API - Not available for forge (only for: fabric)
+   🔍 Model Gap Fix
+      ⏭️  Fabric API - Not available for forge (only for: fabric)
+   🔍 Debugify
+      ⏭️  1eAoo2KR... already in selected mods
+      ⏭️  P7dR8mSH... - version mismatch (required: ['1.21.1'], got: 1.20.1)
+      ⏭️  mOgUt4GM... is optional dependency
+      ⏭️  Cloth Config API already added as dependency
+   🔍 BadOptimizations
+
+📋 Added dependencies (11 mods):
+   • Curios API (source_id: vvuO3ImH..., required by: moonstone)
+   • Biomancy (source_id: uAAuyU4M..., required by: Biomantic Delight)
+   • Architectury API (source_id: lhGA9TYQ..., required by: Hit Feedback)
+   • Tinkers' Construct (source_id: rxIIYO6c..., required by: Tinkers' Thinking)
+   • Sodium Options API (source_id: Es5v4eyq..., required by: Sodium Extras)
+   • Farmer's Delight (source_id: R2OftAxM..., required by: ⛏ Mineral Delight • [Port])
+   • Mekanism (source_id: Ce6I4WUE..., required by: Mekanism Covers)
+   • CoroUtil (source_id: rLLJ1OZM..., required by: Zombie Awareness)
+   • Cloth Config API (source_id: 9s6osm5g..., required by: Lunar)
+   • YUNG's API (source_id: Ua7DFN59..., required by: Villages&Pillages)
+   • [ETF] Entity Texture Features (source_id: BVzZfTc1..., required by: [EMF] Entity Model Features)
+
+🔍 Checking conflicts with dependencies...
+
+✅ [Dependency Resolver] Complete:
+   - AI selected: 73 mods
+   - After loader filter: 73 mods
+   - Dependencies added: 11 mods
+   - Total: 84 mods (73 gameplay + 11 libraries)
+   ℹ️  Dependencies are NOT counted in mod limit (they're libraries)
+
+🔍 [Final Check] Returning 84 mods:
+   - Selected mods: 73
+   - Dependencies: 11
+
+[ARCHITECTURE REFINER] Refining categories
+
+🔧 [Architecture Refiner] Refining architecture based on actual mods...
+   Initial categories: 20
+   Total mods to organize: 84
+   📊 Mod analysis:
+      Gameplay mods: 57
+      Library mods: 27
+      Unique capability prefixes: 25
+📥 [Architecture Refiner] Received refined plan
+   📊 Tokens: 5,700 (prompt: 3,831, completion: 1,869)
+   💵 Cost: $0.001060
+✅ [Architecture Refiner] Refined to 23 categories:
+   📚 Castle Foundations: ~12 mods
+      Capabilities: api.exposed, dependency.library
+   📚 Royal Archives: ~10 mods
+      Capabilities: dependency.library, api.exposed
+   📚 Performance Sanctuary: ~10 mods
+      Capabilities: sim.optimization, memory.footprint
+   📚 Undead Hordes: ~8 mods
+      Capabilities: combat.system, difficulty.scaling
+   📚 Plague Mechanics: ~9 mods
+      Capabilities: combat.system, difficulty.scaling
+   📚 Blood Moon Siege: ~5 mods
+      Capabilities: combat.system, difficulty.scaling
+   📚 Ancient Forge: ~6 mods
+      Capabilities: crafting.expansion, automation.core
+   📚 Dark Arts: ~4 mods
+      Capabilities: magic.system, crafting.expansion
+   📚 Arcane Wisdom: ~4 mods
+      Capabilities: magic.system, crafting.expansion
+   📚 Knight's Arsenal: ~7 mods
+      Capabilities: combat.system, crafting.expansion
+   📚 Castle Defenses: ~6 mods
+      Capabilities: combat.system, automation.core
+   📚 Forgotten Realms: ~8 mods
+      Capabilities: worldgen.structures, theme.realistic
+   📚 Shadowed Forests: ~6 mods
+      Capabilities: worldgen.biomes, difficulty.scaling
+   📚 Tribal Survival: ~7 mods
+      Capabilities: survival.mechanics, difficulty.scaling
+   📚 Clan Diplomacy: ~5 mods
+      Capabilities: multiplayer.enhancement, social.systems
+   📚 Eternal Darkness: ~6 mods
+      Capabilities: lighting.system, difficulty.scaling
+   📚 Grim Visuals: ~8 mods
+      Capabilities: render.pipeline, ctm.connected_textures
+   📚 Mechanical Ingenuity: ~6 mods
+      Capabilities: automation.core, crafting.expansion
+   📚 Ancient Bestiary: ~7 mods
+      Capabilities: mob.variety, difficulty.scaling
+   📚 Siege Engineering: ~5 mods
+      Capabilities: automation.core, combat.system
+   📚 Warlord's Interface: ~7 mods
+      Capabilities: ui.hud.overlay, ui.chat.enhancement
+   📚 Frostbite Survival: ~6 mods
+      Capabilities: survival.mechanics, difficulty.scaling
+   📚 Apocalypse Chronicles: ~5 mods
+      Capabilities: progression.system, crafting.expansion
+   🎯 Total estimated: 157 mods
+   💡 Reasoning: Split the overloaded 'Dark Ages Foundation' (37 mods) into 'Castle Foundations' and 'Royal Archives' to separate core libraries from utility framework...
+📝 [Build Recorder] Saved build: 0000038
+💾 [Build Saved] build_id=0000038
+
+🎯 [Mod Distribution] AI-based distribution to categories...
+   Categories: 23
+   Mods to distribute: 84
+   📊 Split: 39 gameplay, 6 graphics, 20 performance, 19 libraries
+
+🔍 [Library Detection Debug] All 84 classifications:
+   ⚡ mpalladium → PERFORMANCE (weight: 90, performance caps: ['memory.footprint', 'sim.optimization'])
+   ⚡ smartbrainlib → PERFORMANCE (weight: 90, performance caps: ['sim.optimization'])
+   ❌ chance-cubes → GAMEPLAY (weight: 75, gameplay caps: ['tech.energy_system'])
+   ⚡ ferrite-core → PERFORMANCE (weight: 90, performance caps: ['memory.footprint', 'sim.optimization'])
+   ❌ gputape → GAMEPLAY (weight: 80, graphics + gameplay summary: ['craft'])
+   ✅ moonstone → LIBRARY (weight: 90, library tags: ['dependency'])
+   ⚡ redirector → PERFORMANCE (weight: 90, performance caps: ['memory.footprint', 'sim.optimization'])
+   ❌ bio-delight → GAMEPLAY (weight: 75, compatibility with content (not library))
+   ✅ crescentlib-port → LIBRARY (weight: 90, library tags: ['core-mod', 'library'])
+   ✅ hit-feedback → LIBRARY (weight: 80, library caps only: ['api.exposed'])
+   ✅ moonlight → LIBRARY (weight: 90, library tags: ['core-mod', 'library'])
+   ✅ threetag-palladium → LIBRARY (weight: 90, library tags: ['core-mod', 'library'])
+   ❌ liquid-burner → GAMEPLAY (weight: 75, compatibility with content (not library))
+   ❌ tinkers-thinking → GAMEPLAY (weight: 75, compatibility with content (not library))
+   ✅ insanelib → LIBRARY (weight: 90, library tags: ['core-mod', 'library'])
+   ⚡ noisium → PERFORMANCE (weight: 90, performance caps: ['startup.optimization', 'sim.optimization'])
+   ⚡ radium → PERFORMANCE (weight: 90, performance caps: ['memory.footprint', 'sim.optimization'])
+   ⚡ memoryleakfix → PERFORMANCE (weight: 90, performance caps: ['memory.footprint', 'sim.optimization'])
+   ⚡ chloride → PERFORMANCE (weight: 90, performance caps: ['memory.footprint', 'culling.entities'])
+   ⚡ embeddium → PERFORMANCE (weight: 90, performance caps: ['memory.footprint', 'sim.optimization'])
+   ⚡ vmp-forge → PERFORMANCE (weight: 90, performance caps: ['memory.footprint', 'sim.optimization'])
+   ⚡ mpem → PERFORMANCE (weight: 90, performance caps: ['memory.footprint', 'sim.optimization'])
+   ⚡ sodium-extras → PERFORMANCE (weight: 90, performance caps: ['sim.optimization'])
+   ⚡ cravencrafts-bloody-bits → PERFORMANCE (weight: 90, performance caps: ['sim.optimization'])
+   🎨 fog → GRAPHICS (weight: 90, graphics caps + graphics context: ['sky.effects', 'render.pipeline'])
+   ⚡ more-mobs → PERFORMANCE (weight: 90, performance caps: ['culling.entities'])
+   🎨 sodium-dynamic-lights → GRAPHICS (weight: 90, graphics caps + graphics context: ['render.pipeline', 'lighting.system'])
+   ❌ the-hordes → GAMEPLAY (weight: 75, gameplay caps: ['difficulty.scaling', 'combat.system'])
+   ❌ nmpr → GAMEPLAY (weight: 75, gameplay caps: ['difficulty.scaling', 'combat.system'])
+   ❌ contagion → GAMEPLAY (weight: 75, gameplay caps: ['difficulty.scaling', 'combat.system'])
+   ❌ sons-of-sins → GAMEPLAY (weight: 75, gameplay caps: ['magic.spellcasting', 'combat.system'])
+   ❌ butchery → GAMEPLAY (weight: 75, gameplay caps: ['crafting.expansion', 'combat.system'])
+   ❌ mariums-soulslike-weaponry → GAMEPLAY (weight: 75, gameplay caps: ['progression.system', 'combat.system'])
+   ❌ rottencreatures → GAMEPLAY (weight: 75, gameplay caps: ['worldgen.biomes', 'combat.system'])
+   ❌ mutant-monsters → GAMEPLAY (weight: 75, gameplay caps: ['progression.system', 'combat.system'])
+   ❌ nyctophobia-dread → GAMEPLAY (weight: 75, gameplay caps: ['theme.horror', 'combat.system'])
+   ❌ the-boiled-one-reimagined → GAMEPLAY (weight: 75, gameplay caps: ['theme.horror', 'combat.system'])
+   ❌ ballista → GAMEPLAY (weight: 75, gameplay caps: ['combat.system'])
+   ❌ pantheonsent → GAMEPLAY (weight: 75, gameplay caps: ['magic.spellcasting', 'combat.system'])
+   ❌ toms-storage → GAMEPLAY (weight: 75, gameplay caps: ['storage.network', 'crafting.expansion'])
+   ❌ mineral-delight-port → GAMEPLAY (weight: 75, gameplay caps: ['crafting.expansion'])
+   🎨 mekanism-covers → GRAPHICS (weight: 90, graphics caps + graphics context: ['shaders.runtime', 'render.pipeline'])
+   ⚡ modernfix → PERFORMANCE (weight: 90, performance caps: ['memory.footprint', 'startup.optimization'])
+   ❌ zombie-horse-spawn → GAMEPLAY (weight: 50, regular mod fallback (no clear indicators))
+   ❌ zombie-awareness → GAMEPLAY (weight: 75, gameplay caps: ['difficulty.scaling'])
+   ❌ mo-zombies-wave → GAMEPLAY (weight: 75, gameplay caps: ['difficulty.scaling', 'combat.system'])
+   ❌ lunar → GAMEPLAY (weight: 80, graphics + gameplay summary: ['mob', 'mobs'])
+   ❌ enhanced-celestials → GAMEPLAY (weight: 80, graphics + gameplay caps: ['difficulty.scaling'], gameplay summary: ['mob', 'craft'])
+   ❌ the-graveyard-forge → GAMEPLAY (weight: 75, gameplay caps: ['worldgen.structures', 'combat.system'])
+   ❌ villages-and-pillages → GAMEPLAY (weight: 75, gameplay caps: ['worldgen.structures', 'combat.system'])
+   ⚡ entityculling → PERFORMANCE (weight: 90, performance caps: ['memory.footprint', 'sim.optimization'])
+   ⚡ immediatelyfast → PERFORMANCE (weight: 90, performance caps: ['memory.footprint', 'sim.optimization'])
+   ✅ yacl → LIBRARY (weight: 90, library tags: ['library', 'api'])
+   ❌ xaeros-minimap → GAMEPLAY (weight: 70, ui caps: ['ui.hud.overlay', 'ui.minimap'])
+   ❌ xaeros-world-map → GAMEPLAY (weight: 70, ui caps: ['ui.hud.overlay', 'ui.minimap'])
+   ❌ appleskin → GAMEPLAY (weight: 70, ui caps: ['ui.tooltip.enhancement', 'ui.hud.overlay'])
+   🎨 entity-model-features → GRAPHICS (weight: 90, graphics caps + graphics context: ['render.pipeline'])
+   ❌ not-enough-animations → GAMEPLAY (weight: 50, regular mod fallback (no clear indicators))
+   ⚡ dynamic-fps → PERFORMANCE (weight: 90, performance caps: ['memory.footprint', 'sim.optimization'])
+   ❌ 3dskinlayers → GAMEPLAY (weight: 50, regular mod fallback (no clear indicators))
+   ✅ jade → LIBRARY (weight: 90, library tags: ['library', 'dependency'])
+   ❌ no-chat-reports → GAMEPLAY (weight: 70, ui caps: ['ui.chat.enhancement'])
+   ❌ simple-voice-chat → GAMEPLAY (weight: 50, regular mod fallback (no clear indicators))
+   ✅ puzzles-lib → LIBRARY (weight: 90, library tags: ['core-mod', 'library'])
+   ✅ forge-config-api-port → LIBRARY (weight: 90, library tags: ['core-mod', 'library'])
+   ✅ balm → LIBRARY (weight: 90, library tags: ['core-mod', 'library'])
+   ✅ geckolib → LIBRARY (weight: 90, library tags: ['library', 'api'])
+   ❌ mouse-tweaks → GAMEPLAY (weight: 70, ui caps: ['ui.inventory.helper'])
+   ❌ chat-heads → GAMEPLAY (weight: 70, ui caps: ['ui.chat.enhancement'])
+   ✅ melody → LIBRARY (weight: 90, library tags: ['library', 'dependency'])
+   🎨 modelfix → GRAPHICS (weight: 90, graphics caps + graphics context: ['render.pipeline'])
+   ⚡ debugify → PERFORMANCE (weight: 90, performance caps: ['sim.optimization'])
+   ⚡ badoptimizations → PERFORMANCE (weight: 90, performance caps: ['memory.footprint', 'sim.optimization'])
+   ✅ curios → LIBRARY (weight: 95, library tags: ['library', 'api'])
+   ❌ biomancy → GAMEPLAY (weight: 70, gameplay caps: ['magic.spellcasting', 'tech.machines'])
+   ✅ architectury-api → LIBRARY (weight: 95, library tags: ['core-mod', 'library'])
+   ❌ tinkers-construct → GAMEPLAY (weight: 70, gameplay caps: ['progression.system', 'crafting.expansion'])
+   ✅ sodium-options-api → LIBRARY (weight: 95, library tags: ['library', 'api'])
+   ❌ farmers-delight → GAMEPLAY (weight: 70, gameplay caps: ['crafting.expansion', 'theme.cozy'])
+   ❌ mekanism → GAMEPLAY (weight: 70, gameplay caps: ['tech.energy_system', 'tech.machines'])
+   ✅ coroutil → LIBRARY (weight: 95, library tags: ['core-mod', 'library'])
+   ✅ cloth-config → LIBRARY (weight: 95, library tags: ['library', 'api'])
+   ✅ yungs-api → LIBRARY (weight: 95, library tags: ['core-mod', 'library'])
+   🎨 entitytexturefeatures → GRAPHICS (weight: 100, graphics caps: ['ctm.connected_textures'])
+   🔍 Found library category by capabilities: 'Castle Foundations'
+   🔍 Found performance category by capabilities: 'Performance Sanctuary'
+   🔍 Found graphics category by capabilities: 'Eternal Darkness'
+   📚 Placed 19 libraries into 'Castle Foundations'
+   🔍 DEBUG: graphics_category='Eternal Darkness', len(graphics_mods)=6
+   🎨 Placed 6 graphics mods into 'Eternal Darkness'
+   🔍 DEBUG: performance_category='Performance Sanctuary', len(performance_mods)=20
+   🔍 Performance mods found: Palladium, SmartBrainLib, FerriteCore, Redirector, Noisium
+      ... and 15 more
+   ⚡ Placed 20 performance mods into 'Performance Sanctuary'
+   🤖 Distributing 39 gameplay mods via AI...
+   ✅ Batch 1/2: 20/20 mods assigned
+   ✅ Batch 2/2: 19/19 mods assigned
+
+✅ [Mod Distribution] AI distribution complete
+   Categories with mods: 20
+
+🔍 [Validation] Checking distribution quality...
+   ✅ All mods assigned
+   ⚠️  3 empty categories: Ancient Forge, Siege Engineering, Frostbite Survival
+   ⚠️  1 overloaded categories (20+ mods):
+      - Performance Sanctuary: 20 mods (consider splitting)
+
+📊 [Distribution Summary]
+   Total mods: 84
+   • Performance Sanctuary: 20 mods (23.8%)
+   • Castle Foundations: 19 mods (22.6%)
+   • Eternal Darkness: 6 mods (7.1%)
+   • Warlord's Interface: 6 mods (7.1%)
+   • Royal Archives: 5 mods (6.0%)
+   • Other 15 categories: 28 mods (33.3%)
+
+✅ [Mod Distribution] Validation complete
+================================================================================
+📝 MODPACK SUMMARY GENERATOR
+================================================================================
+🤖 Calling DeepSeek AI for summary generation...
+   📊 Categories: 20
+   📦 Total mods: 84
+✅ AI response received
+   💰 Tokens: 2678, Cost: $0.000723
+
+📝 Generated Summary:
+   Title: Medieval Zombie Siege
+   Categories described: 20
+   Key features: 5
+
+✅ [Build Updated] Title: Medieval Zombie Siege
+[OK] Generated board_state.json with 84 mods and 20 categories
+
+================================================================================
+⏱️  [TIMING SUMMARY]
+================================================================================
+   Mod Selection                  112.46s ( 43.8%)
+   Architecture Refiner            58.40s ( 22.7%)
+   Mod Distribution                55.20s ( 21.5%)
+   Modpack Summary                 26.30s ( 10.2%)
+   Dependency Resolution            0.55s (  0.2%)
+   Fabric Compatibility             0.00s (  0.0%)
+--------------------------------------------------------------------------------
+   TOTAL                          256.99s (100.0%)
+================================================================================

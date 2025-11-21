@@ -19,6 +19,7 @@ from config import DEEPSEEK_API_KEY, DEEPSEEK_INPUT_COST, DEEPSEEK_OUTPUT_COST
 
 # Загружаем capabilities reference для классификации
 CAPS_REFERENCE = None
+TAGS_SYSTEM = None
 
 def load_capabilities_reference():
     global CAPS_REFERENCE
@@ -27,6 +28,243 @@ def load_capabilities_reference():
         with open(caps_path, 'r', encoding='utf-8') as f:
             CAPS_REFERENCE = json.load(f)
     return CAPS_REFERENCE
+
+def load_tags_system():
+    """Загружает систему тегов из tags_system.json"""
+    global TAGS_SYSTEM
+    if TAGS_SYSTEM is None:
+        tags_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'tags_system.json')
+        with open(tags_path, 'r', encoding='utf-8') as f:
+            TAGS_SYSTEM = json.load(f)
+    return TAGS_SYSTEM
+
+def get_library_tags():
+    """Возвращает множество тегов, которые точно указывают на библиотеку"""
+    tags_system = load_tags_system()
+    # Библиотечные теги из категории "technical"
+    technical_tags = tags_system.get('categories', {}).get('technical', {}).get('tags', [])
+    library_tags = {'library', 'api', 'dependency', 'core-mod'}
+    # Фильтруем только библиотечные теги из technical категории
+    return {tag for tag in technical_tags if tag in library_tags}
+
+def classify_dependency_mod(
+    mod: Dict,
+    mod_tags: set,
+    mod_caps_set: set,
+    mod_name_lower: str,
+    library_tags_set: set,
+    library_caps: set,
+    performance_caps: set,
+    graphics_caps_strict: set,
+    gameplay_caps: set
+) -> tuple:
+    """
+    Формализованная система правил для классификации зависимостей с весами и приоритетами
+    
+    Returns:
+        (category, reason, weight) где:
+        - category: 'library', 'performance', 'graphics', 'gameplay'
+        - reason: строка с объяснением
+        - weight: числовой вес уверенности (0-100)
+    """
+    # Загружаем worldgen capabilities для контекстной проверки
+    caps_ref = load_capabilities_reference()
+    worldgen_caps = set(caps_ref['categories'].get('world_generation', []))
+    
+    # Вычисляем пересечения
+    gameplay_intersection = mod_caps_set & gameplay_caps
+    performance_intersection = mod_caps_set & performance_caps
+    graphics_intersection = mod_caps_set & graphics_caps_strict
+    lib_intersection = mod_caps_set & library_caps
+    
+    # Проверяем наличие библиотечных индикаторов
+    has_library_tags = bool(mod_tags & library_tags_set)
+    library_name_keywords = ['api', 'library', 'lib', 'core', 'foundation']
+    has_library_name = any(keyword in mod_name_lower for keyword in library_name_keywords)
+    
+    # ПРАВИЛО 1: Performance capabilities (вес: 100) - самый высокий приоритет
+    if performance_intersection:
+        return ('performance', f'performance caps: {list(performance_intersection)[:2]}', 100)
+    
+    # ПРАВИЛО 2: Graphics capabilities (вес: 100) - высокий приоритет
+    if graphics_intersection:
+        return ('graphics', f'graphics caps: {list(graphics_intersection)[:2]}', 100)
+    
+    # ПРАВИЛО 3: Library теги (вес: 95) - очень надёжный индикатор
+    if has_library_tags:
+        matched_tags = list(mod_tags & library_tags_set)[:2]
+        return ('library', f'library tags: {matched_tags}', 95)
+    
+    # ПРАВИЛО 4: Library название (вес: 90) - надёжный индикатор
+    if has_library_name:
+        matched_keywords = [kw for kw in library_name_keywords if kw in mod_name_lower][:2]
+        return ('library', f'library name keywords: {matched_keywords}', 90)
+    
+    # ПРАВИЛО 5: Library capabilities + только worldgen (вес: 85)
+    # Комбинация: library caps + worldgen = API для структур (библиотека)
+    if lib_intersection:
+        significant_gameplay_caps = gameplay_intersection - worldgen_caps
+        if not significant_gameplay_caps:
+            worldgen_found = list(gameplay_intersection & worldgen_caps)[:2]
+            lib_caps_found = list(lib_intersection)[:2]
+            return ('library', f'library caps: {lib_caps_found}, only worldgen: {worldgen_found}', 85)
+    
+    # ПРАВИЛО 6: Library capabilities + значимые gameplay (вес: 80)
+    # Комбинация: library caps + gameplay = gameplay мод с API (Farmers Delight, Mekanism)
+    if lib_intersection and gameplay_intersection:
+        significant_gameplay_caps = gameplay_intersection - worldgen_caps
+        if significant_gameplay_caps:
+            sig_caps = list(significant_gameplay_caps)[:2]
+            return ('gameplay', f'library caps + significant gameplay: {sig_caps}', 80)
+    
+    # ПРАВИЛО 7: Только library capabilities без gameplay (вес: 75)
+    if lib_intersection and not gameplay_intersection:
+        lib_caps_found = list(lib_intersection)[:2]
+        return ('library', f'library caps only: {lib_caps_found}', 75)
+    
+    # ПРАВИЛО 8: Gameplay capabilities (вес: 70)
+    if gameplay_intersection:
+        gameplay_caps_found = list(gameplay_intersection)[:2]
+        return ('gameplay', f'gameplay caps: {gameplay_caps_found}', 70)
+    
+    # ПРАВИЛО 9: Fallback - библиотека по умолчанию для зависимостей (вес: 50)
+    return ('library', 'dependency fallback (no clear indicators)', 50)
+
+def classify_regular_mod(
+    mod: Dict,
+    mod_tags: set,
+    mod_caps_set: set,
+    mod_name_lower: str,
+    mod_summary_lower: str,
+    library_tags_set: set,
+    library_caps: set,
+    performance_caps: set,
+    graphics_caps_strict: set,
+    gameplay_caps: set,
+    ui_caps: set
+) -> tuple:
+    """
+    Формализованная система правил для классификации обычных модов с весами и приоритетами
+    
+    Returns:
+        (category, reason, weight) где:
+        - category: 'library', 'performance', 'graphics', 'gameplay'
+        - reason: строка с объяснением
+        - weight: числовой вес уверенности (0-100)
+    """
+    # Вычисляем пересечения
+    gameplay_intersection = mod_caps_set & gameplay_caps
+    performance_intersection = mod_caps_set & performance_caps
+    graphics_intersection = mod_caps_set & graphics_caps_strict
+    lib_intersection = mod_caps_set & library_caps
+    ui_intersection = mod_caps_set & ui_caps
+    
+    has_library_tags = bool(mod_tags & library_tags_set)
+    library_name_keywords = ['api', 'library', 'lib', 'core', 'foundation']
+    has_library_name = any(keyword in mod_name_lower for keyword in library_name_keywords)
+    
+    # ПРАВИЛО 1: Performance capabilities (вес: 90) - ПРИОРИТЕТ над library tags
+    # Если у мода есть performance capabilities, это performance мод, даже если есть library тег
+    if performance_intersection:
+        return ('performance', f'performance caps: {list(performance_intersection)[:2]}', 90)
+    
+    # ПРАВИЛО 2: Graphics capabilities (вес: 90) - ПРИОРИТЕТ над library tags
+    # Если у мода есть graphics capabilities, это graphics мод, даже если есть library тег
+    if graphics_intersection:
+        # Проверяем контекст ниже, но сначала возвращаем graphics если это чистая графика
+        pass  # Продолжаем проверку контекста ниже
+    
+    # ПРАВИЛО 3: Library теги (вес: 90) - но ТОЛЬКО если нет performance/graphics
+    if has_library_tags and not performance_intersection and not graphics_intersection:
+        matched_tags = list(mod_tags & library_tags_set)[:2]
+        return ('library', f'library tags: {matched_tags}', 90)
+    
+    # ПРАВИЛО 4: Library название (вес: 85) - но ТОЛЬКО если нет performance/graphics
+    if has_library_name and not performance_intersection and not graphics_intersection:
+        matched_keywords = [kw for kw in library_name_keywords if kw in mod_name_lower][:2]
+        return ('library', f'library name keywords: {matched_keywords}', 85)
+    
+    # ПРАВИЛО 5: Graphics capabilities (вес: 90) - с проверкой контекста
+    if graphics_intersection:
+        # Проверяем: это чистая графика или gameplay с визуалом?
+        # Gameplay tags из tags_system.json
+        gameplay_tags_keywords = [
+            'weapons', 'swords', 'bows', 'armor', 'tools', 'building-blocks', 'decorative-blocks',
+            'combat', 'pvp', 'boss-fights', 'dungeons', 'biomes', 'structures', 'villages',
+            'hostile-mobs', 'passive-mobs', 'boss-mobs'
+        ]
+        has_gameplay_tags = any(tag in mod_tags for tag in gameplay_tags_keywords)
+        
+        # Проверка summary на gameplay keywords
+        gameplay_keywords_in_summary = [
+            'mob', 'mobs', 'creature', 'monster', 'weapon', 'armor', 'sword', 'bow',
+            'block', 'blocks', 'item', 'items', 'craft', 'dungeon', 'structure', 'biome',
+            'adds', 'new mobs', 'new creatures', 'new items', 'new blocks'
+        ]
+        has_gameplay_summary = any(keyword in mod_summary_lower for keyword in gameplay_keywords_in_summary)
+        
+        # Graphics контекст (shader/lighting) - приоритет над gameplay
+        graphics_context_keywords = [
+            'shader', 'shaders', 'lighting', 'light', 'shadow', 'shadows',
+            'render', 'rendering', 'smooth lighting', 'dynamic light', 'iris', 'sodium',
+            'flywheel', 'smooth shading', 'path block', 'visual effect'
+        ]
+        has_graphics_context = any(keyword in mod_summary_lower for keyword in graphics_context_keywords)
+        
+        # Если graphics контекст → GRAPHICS независимо от упоминания blocks
+        if has_graphics_context:
+            return ('graphics', f'graphics caps + graphics context: {list(graphics_intersection)[:2]}', 90)
+        
+        # Если есть gameplay индикаторы → GAMEPLAY (мод с визуалом)
+        if gameplay_intersection or has_gameplay_tags or has_gameplay_summary:
+            reason_parts = []
+            if gameplay_intersection:
+                reason_parts.append(f'gameplay caps: {list(gameplay_intersection)[:2]}')
+            if has_gameplay_tags:
+                matched_tags = [tag for tag in gameplay_tags_keywords if tag in mod_tags][:2]
+                reason_parts.append(f'gameplay tags: {matched_tags}')
+            if has_gameplay_summary:
+                matched_keywords = [kw for kw in gameplay_keywords_in_summary if kw in mod_summary_lower][:2]
+                reason_parts.append(f'gameplay summary: {matched_keywords}')
+            return ('gameplay', f'graphics + {", ".join(reason_parts)}', 80)
+        
+        # Чистая графика
+        return ('graphics', f'graphics caps: {list(graphics_intersection)[:2]}', 90)
+    
+    # ПРАВИЛО 5: Library capabilities БЕЗ gameplay контента (вес: 80)
+    # Проверка на tech integration или compatibility с контентом
+    if lib_intersection:
+        tech_keywords = {'energy', 'electricity', 'power', 'voltage', 'joules', 'forge energy', 'rf', 'fe converter'}
+        content_keywords = {'recipe', 'recipes', 'item', 'items', 'block', 'blocks', 'food', 'foods', 'add', 'adds', 'new', 'craft', 'crafting'}
+        
+        is_tech_integration = any(kw in mod_name_lower or kw in mod_summary_lower for kw in tech_keywords)
+        has_content = any(kw in mod_summary_lower for kw in content_keywords)
+        
+        # Если это tech integration или compatibility с контентом → gameplay
+        if is_tech_integration and 'compatibility.integration' in lib_intersection:
+            return ('gameplay', f'tech integration (not library): {list(lib_intersection)[:2]}', 75)
+        
+        if 'compatibility.integration' in lib_intersection and has_content:
+            return ('gameplay', f'compatibility with content (not library)', 75)
+        
+        # Чистая библиотека
+        if not gameplay_intersection:
+            return ('library', f'library caps only: {list(lib_intersection)[:2]}', 80)
+    
+    # ПРАВИЛО 7: Gameplay capabilities (вес: 75)
+    if gameplay_intersection:
+        return ('gameplay', f'gameplay caps: {list(gameplay_intersection)[:2]}', 75)
+    
+    # ПРАВИЛО 8: UI capabilities (вес: 70-80) - проверяем контекст
+    if ui_intersection:
+        # Если UI + library caps = UI library (REI, JEI) → библиотека
+        if lib_intersection:
+            return ('library', f'UI + library caps: {list(ui_intersection)[:2]} + {list(lib_intersection)[:2]}', 80)
+        # Обычные UI моды (инвентарь, HUD) → gameplay
+        return ('gameplay', f'ui caps: {list(ui_intersection)[:2]}', 70)
+    
+    # ПРАВИЛО 9: Fallback - gameplay по умолчанию для обычных модов (вес: 50)
+    return ('gameplay', 'regular mod fallback (no clear indicators)', 50)
 
 
 def refine_architecture(
@@ -78,10 +316,13 @@ CONTEXT:
 
 REFINING PRINCIPLES:
 
-1. **Preserve theme and structure:**
-   - Keep the initial category themes/names where appropriate
-   - Expand naturally from the skeleton (don't throw it away)
-   - Maintain the modpack's core identity from user's request
+1. **RENAME AND REFINE categories creatively:**
+   - DO NOT keep generic initial category names - RENAME them to be thematic and evocative
+   - Use the mod summaries and user request to create NEW creative names
+   - Expand naturally from the skeleton but IMPROVE the names to match the modpack's atmosphere
+   - Maintain the modpack's core identity from user's request through CREATIVE naming
+   - Example: If initial has "Medieval Combat" → rename to "Knight's Arsenal" or "Royal Armory"
+   - Example: If initial has "Core Libraries" → rename to "Castle Foundations" or "Royal Archives"
 
 2. **Split overloaded categories:**
    - If a category has 15+ mods → split into 2-3 sub-categories
@@ -96,19 +337,33 @@ REFINING PRINCIPLES:
 4. **Ideal category size:**
    - Target: 5-10 mods per category
    - Acceptable: 3-15 mods per category
-   - Avoid: 20+ mod categories (too cluttered)
-   - Avoid: 1-2 mod categories (merge with related category)
+   - CRITICAL: If a category has 15+ mods → SPLIT it into 2-3 sub-categories immediately
+   - Avoid: 20+ mod categories (too cluttered) - MUST split these
+   - Avoid: 1-2 mod categories (merge with related category only if truly related)
 
 5. **Use actual capabilities:**
    - Look at what capabilities the mods ACTUALLY have
    - Group mods with related capability prefixes
    - Don't force mods into wrong categories
 
-6. **Creative naming:**
-   - Category names should reflect the modpack's THEME
-   - Use evocative, thematic names (not just technical terms)
-   - Example: "Enchanted Armory" instead of "Combat Mods"
-   - Example: "Castle Foundations" instead of "Building Mods"
+6. **Creative naming - BE EVOCATIVE AND THEMATIC:**
+   - Category names MUST match the modpack's atmosphere and theme
+   - Use the mod summaries to understand what mods actually do, then create thematic names
+   - Examples for medieval/fantasy packs:
+     * "Knight's Arsenal" / "Royal Armory" instead of "Combat Mods"
+     * "Castle Keep" / "Fortress Architecture" instead of "Building Blocks"
+     * "Mystical Realms" / "Enchanted Lands" instead of "Fantasy Biomes"
+     * "Royal Archives" / "Castle Foundations" instead of "Libraries"
+     * "Enchanted Visuals" / "Atmospheric Lighting" instead of "Graphics"
+   - Examples for tech packs:
+     * "Engineering Hub" instead of "Tech Mods"
+     * "Power Grid" instead of "Energy Systems"
+   - Examples for adventure packs:
+     * "Explorer's Toolkit" instead of "Adventure Mods"
+     * "Shadow Realms" instead of "Dimensions"
+   - AVOID generic names: "Core Systems", "Gameplay Mods", "Content", "General"
+   - Each name should evoke emotion and match the modpack's unique identity
+   - Look at mod summaries to understand the actual functionality and create names accordingly
 
 OUTPUT FORMAT (JSON only):
 {
@@ -124,14 +379,34 @@ OUTPUT FORMAT (JSON only):
   "reasoning": "Brief explanation of key changes made to initial architecture"
 }
 
-RULES:
-- Create enough categories so each has 5-10 mods ideally
-- Be creative and thematic with names
-- Split overloaded categories logically
-- Merge tiny categories into related ones
+CRITICAL RULES:
+- ALWAYS rename categories to be creative and thematic - DO NOT keep generic names
+- DO NOT reduce the number of categories - MAINTAIN or INCREASE the initial category count
+- If initial architecture has many categories (10+), keep them or split further - DO NOT merge into fewer
+- Create enough categories so each has 5-10 mods ideally (if category has 15+ mods → SPLIT it)
+- Be creative and thematic with names - use examples above as inspiration
+- Split overloaded categories (15+ mods) into 2-3 sub-categories by logical themes
+- Only merge tiny categories (1-2 mods) if they're truly related
 - Separate libraries from gameplay mods
+- If a category name is generic (e.g., "Combat Mods", "Building Blocks", "Core Libraries") → RENAME it creatively
+- Look at mod summaries to understand functionality, then create evocative names that match the modpack's theme
+- IMPORTANT: With {len(mods)} mods, you should have AT LEAST {len(initial_architecture.get('categories', []))} categories, preferably MORE if some categories are overloaded
 """
 
+    # Собираем sample summaries модов для понимания их функциональности
+    sample_mods_with_summaries = []
+    for mod in mods[:15]:  # Первые 15 модов для примера
+        mod_name = mod.get('name', mod.get('slug', 'Unknown'))
+        mod_summary = mod.get('summary', mod.get('description', ''))[:150]
+        mod_caps = mod.get('capabilities', [])[:5]
+        is_dep = mod.get('_added_as_dependency', False)
+        dep_label = " [DEPENDENCY]" if is_dep else ""
+        sample_mods_with_summaries.append(f"  - {mod_name}{dep_label}: {mod_summary}")
+        if mod_caps:
+            sample_mods_with_summaries.append(f"    Capabilities: {', '.join(mod_caps)}")
+    
+    mod_summaries_text = "\n".join(sample_mods_with_summaries) if sample_mods_with_summaries else "No mod summaries available"
+    
     user_message = f"""USER REQUEST: "{user_prompt}"
 
 INITIAL ARCHITECTURE (skeleton):
@@ -140,13 +415,25 @@ INITIAL ARCHITECTURE (skeleton):
 ACTUAL MODS DISTRIBUTION:
 {mod_distribution_text}
 
+SAMPLE MODS WITH SUMMARIES (to understand actual functionality):
+{mod_summaries_text}
+
 CAPABILITY ANALYSIS:
 {capability_analysis_text}
 
 Total mods: {len(mods)} ({mod_analysis['gameplay_count']} gameplay + {mod_analysis['library_count']} libraries)
+Initial categories: {len(initial_architecture.get('categories', []))}
 
-Refine the architecture to organize these mods effectively. Create enough categories so each has 5-10 mods ideally.
-Return ONLY valid JSON."""
+IMPORTANT INSTRUCTIONS:
+1. Use mod summaries to understand what mods actually do, then create thematic category names that match their functionality
+2. DO NOT reduce the number of categories - maintain {len(initial_architecture.get('categories', []))} categories or INCREASE if some are overloaded
+3. Look at "ACTUAL MODS DISTRIBUTION" above - if you see "⚠️ OVERLOADED" categories (15+ mods) → SPLIT them into 2-3 sub-categories with creative names
+4. If a category would have 15+ mods → SPLIT it into 2-3 sub-categories with creative names IMMEDIATELY
+5. Create enough categories so each has 5-10 mods ideally
+6. With {len(mods)} mods, you need AT LEAST {max(8, len(initial_architecture.get('categories', [])))} categories for good organization
+7. If initial architecture has {len(initial_architecture.get('categories', []))} categories, your refined architecture should have {len(initial_architecture.get('categories', []))} or MORE categories (not fewer!)
+
+Refine the architecture to organize these mods effectively. Return ONLY valid JSON."""
 
     try:
         response = requests.post(
@@ -161,7 +448,7 @@ Return ONLY valid JSON."""
                     {'role': 'system', 'content': system_prompt},
                     {'role': 'user', 'content': user_message}
                 ],
-                'temperature': 0.4,  # Немного выше для креативности в названиях
+                'temperature': 0.8,  # Высокая креативность для названий категорий
                 'max_tokens': 2500
             },
             timeout=60
@@ -326,18 +613,27 @@ def format_mod_distribution(mods: List[Dict], initial_architecture: Dict) -> str
             label = f"{mod_name} {'[LIB]' if is_lib else ''}"
             distribution['Unassigned'].append(label)
     
-    # Форматируем
+    # Форматируем с выделением перегруженных категорий
     lines = []
     for cat_name in sorted(distribution.keys(), key=lambda x: -len(distribution[x])):
         mods_in_cat = distribution[cat_name]
-        lines.append(f"{cat_name}: {len(mods_in_cat)} mods")
-        if len(mods_in_cat) <= 5:
+        mod_count = len(mods_in_cat)
+        
+        # Выделяем перегруженные категории
+        if mod_count >= 15:
+            lines.append(f"⚠️  {cat_name}: {mod_count} mods (OVERLOADED - MUST SPLIT into 2-3 sub-categories)")
+        elif mod_count >= 10:
+            lines.append(f"📊 {cat_name}: {mod_count} mods (consider splitting)")
+        else:
+            lines.append(f"{cat_name}: {mod_count} mods")
+        
+        if mod_count <= 5:
             for mod in mods_in_cat:
                 lines.append(f"  - {mod}")
         else:
             for mod in mods_in_cat[:3]:
                 lines.append(f"  - {mod}")
-            lines.append(f"  ... and {len(mods_in_cat) - 3} more")
+            lines.append(f"  ... and {mod_count - 3} more")
     
     return "\n".join(lines)
 
@@ -365,6 +661,9 @@ def distribute_mods_to_categories(
     deepseek_key: str = DEEPSEEK_API_KEY
 ) -> Dict[str, List[Dict]]:
     """
+    Распределяет моды по категориям с использованием AI.
+    Важно: categories уже должны иметь креативные названия от Architecture Refiner.
+    
     Использует AI для точного распределения модов по категориям
     
     Args:
@@ -415,239 +714,80 @@ def distribute_mods_to_categories(
     graphics_mods = []
     gameplay_mods = []
     
-    # Debug: соберём причины классификации
+    # Debug: соберём причины классификации с весами
     debug_classifications = []
     
-    # Integration моды которые являются tech/energy мостами, а не библиотеками
-    TECH_INTEGRATION_KEYWORDS = {
-        'energy', 'electricity', 'power', 'voltage', 'joules', 'forge energy', 'rf', 'fe converter'
-    }
+    # Загружаем библиотечные теги один раз
+    library_tags_set = get_library_tags()
     
     for mod in mods:
-        is_lib = False
         mod_slug = mod.get('slug', 'unknown')
-        classification_reason = None
         mod_caps = mod.get('capabilities', [])
+        mod_caps_set = set(mod_caps)
+        mod_tags = set(mod.get('tags', []))
         mod_name_lower = mod.get('name', '').lower()
         mod_summary_lower = mod.get('summary', '').lower()
         
         # КРИТЕРИЙ 1 (ПРИОРИТЕТ): Явно помечен как dependency
+        # Используем формализованную систему правил с весами
         if mod.get('_added_as_dependency', False):
-            # Проверка: это чистая библиотека, gameplay, performance или graphics мод?
-            mod_caps_set = set(mod_caps)
-            gameplay_intersection = mod_caps_set & gameplay_caps
-            performance_intersection = mod_caps_set & performance_caps
-            graphics_intersection = mod_caps_set & graphics_caps_strict
-            
-            # Если dependency имеет gameplay capabilities → это gameplay мод (farmers-delight, mekanism)
-            if gameplay_intersection:
-                gameplay_mods.append(mod)
-                debug_classifications.append(f"❌ {mod_slug} → GAMEPLAY (dependency with gameplay caps: {list(gameplay_intersection)[:2]})")
-                continue
-            
-            # Если dependency имеет performance capabilities → PERFORMANCE (sodium)
-            if performance_intersection:
-                performance_mods.append(mod)
-                debug_classifications.append(f"⚡ {mod_slug} → PERFORMANCE (dependency with perf caps: {list(performance_intersection)[:2]})")
-                continue
-            
-            # Если dependency имеет graphics capabilities → GRAPHICS
-            if graphics_intersection:
-                graphics_mods.append(mod)
-                debug_classifications.append(f"🎨 {mod_slug} → GRAPHICS (dependency with graphics caps: {list(graphics_intersection)[:2]})")
-                continue
-            
-            # Иначе → чистая библиотека
-            library_mods.append(mod)
-            debug_classifications.append(f"✅ {mod_slug} → LIBRARY (_added_as_dependency=True)")
-            continue
-        
-        # КРИТЕРИЙ 2 (ПРИОРИТЕТ): Capabilities-based classification
-        mod_caps_set = set(mod_caps)
-        
-        # 2a. Library capabilities (compatibility) — с проверкой контекста
-        lib_intersection = mod_caps_set & library_caps
-        if lib_intersection:
-            # Проверка 1: tech/energy integration моды
-            is_tech_integration = any(
-                keyword in mod_name_lower or keyword in mod_summary_lower 
-                for keyword in TECH_INTEGRATION_KEYWORDS
+            category, reason, weight = classify_dependency_mod(
+                mod=mod,
+                mod_tags=mod_tags,
+                mod_caps_set=mod_caps_set,
+                mod_name_lower=mod_name_lower,
+                library_tags_set=library_tags_set,
+                library_caps=library_caps,
+                performance_caps=performance_caps,
+                graphics_caps_strict=graphics_caps_strict,
+                gameplay_caps=gameplay_caps
             )
             
-            if is_tech_integration and 'compatibility.integration' in lib_intersection:
-                gameplay_mods.append(mod)
-                debug_classifications.append(f"❌ {mod_slug} → GAMEPLAY (tech integration, not library)")
-                continue
-            
-            # Проверка 2: compatibility мод с контентом (рецепты, итемы, блоки)
-            content_keywords = [
-                'recipe', 'recipes', 'item', 'items', 'block', 'blocks', 'food', 'foods',
-                'add', 'adds', 'new', 'craft', 'crafting'
-            ]
-            has_content = any(keyword in mod_summary_lower for keyword in content_keywords)
-            
-            if 'compatibility.integration' in lib_intersection and has_content:
-                # Это compatibility мод с gameplay контентом (Vampire's Delight)
-                gameplay_mods.append(mod)
-                debug_classifications.append(f"❌ {mod_slug} → GAMEPLAY (compat with content)")
-                continue
-            
-            # Чистая библиотека
-            library_mods.append(mod)
-            debug_classifications.append(f"✅ {mod_slug} → LIBRARY (caps: {list(lib_intersection)[:2]})")
-            continue
-        
-        # 2b. Graphics & Shaders capabilities → Check if pure graphics or gameplay with visuals
-        # Строгая проверка: должны быть строгие graphics caps (НЕ только visual.effects)
-        graphics_strict_intersection = mod_caps_set & graphics_caps_strict
-        
-        # Gameplay tags from tags_system.json (items-equipment, blocks, gameplay, world-generation, mobs)
-        gameplay_tags_keywords = [
-            # items-equipment
-            'weapons', 'swords', 'bows', 'crossbows', 'guns', 'armor', 'helmets', 'chestplates', 'shields',
-            'tools', 'pickaxes', 'axes', 'accessories', 'trinkets', 'backpacks',
-            # blocks (БЕЗ lighting-blocks - это гибридные моды с lighting.system capability)
-            'building-blocks', 'decorative-blocks', 'furniture',
-            # gameplay
-            'combat', 'pvp', 'pve', 'boss-fights', 'dungeons', 'quests', 'progression-system',
-            # world-generation
-            'biomes', 'structures', 'villages', 'dungeons-gen', 'castles', 'cities',
-            # mobs
-            'hostile-mobs', 'passive-mobs', 'boss-mobs', 'tameable-mobs'
-        ]
-        
-        # Особый случай: render.pipeline может быть и в performance, и в graphics
-        if 'render.pipeline' in mod_caps_set:
-            # Если есть другие graphics caps → проверяем контекст
-            if graphics_strict_intersection - {'render.pipeline'}:
-                # Проверяем: это чистая графика или gameplay с визуалом?
-                gameplay_intersection = mod_caps_set & gameplay_caps
-                mod_tags = set(mod.get('tags', []))
-                has_gameplay_tags = any(tag in mod_tags for tag in gameplay_tags_keywords)
-                
-                # Проверка summary на gameplay keywords
-                summary = mod.get('summary', '').lower()
-                gameplay_keywords_in_summary = [
-                    'mob', 'mobs', 'creature', 'creatures', 'beast', 'beasts', 'monster', 'monsters',
-                    'entity', 'entities', 'animal', 'animals', 'boss', 'bosses',
-                    'weapon', 'weapons', 'armor', 'armour', 'sword', 'bow', 'shield',
-                    'block', 'blocks', 'item', 'items', 'craft', 'crafting',
-                    'dungeon', 'dungeons', 'structure', 'structures', 'biome', 'biomes',
-                    'adds', 'new mobs', 'new creatures', 'new items', 'new blocks'
-                ]
-                has_gameplay_summary = any(keyword in summary for keyword in gameplay_keywords_in_summary)
-                
-                if gameplay_intersection or has_gameplay_tags or has_gameplay_summary:
-                    gameplay_mods.append(mod)
-                    if gameplay_intersection:
-                        reason = 'gameplay caps'
-                    elif has_gameplay_tags:
-                        reason = f'gameplay tags: {list(mod_tags & set(gameplay_tags_keywords))[:2]}'
-                    else:
-                        found_keywords = [kw for kw in gameplay_keywords_in_summary if kw in summary]
-                        reason = f'gameplay summary: {found_keywords[:2]}'
-                    debug_classifications.append(f"❌ {mod_slug} → GAMEPLAY (graphics + {reason})")
-                else:
-                    graphics_mods.append(mod)
-                    debug_classifications.append(f"🎨 {mod_slug} → GRAPHICS (caps: {list(graphics_strict_intersection)[:2]})")
-                continue
-            # Если есть performance caps → PERFORMANCE (это Sodium)
-            elif mod_caps_set & performance_caps:
-                performance_mods.append(mod)
-                perf_caps = list(mod_caps_set & performance_caps)
-                debug_classifications.append(f"⚡ {mod_slug} → PERFORMANCE (caps: {perf_caps[:2] + ['render.pipeline']})")
-                continue
-            # Только render.pipeline без других caps → GRAPHICS (fallback)
-            else:
-                graphics_mods.append(mod)
-                debug_classifications.append(f"🎨 {mod_slug} → GRAPHICS (caps: ['render.pipeline'])")
-                continue
-        
-        # Другие строгие graphics capabilities (shaders, sky, lighting, particles)
-        if graphics_strict_intersection:
-            # Проверяем контекст: чистая графика или gameplay с визуалом?
-            gameplay_intersection = mod_caps_set & gameplay_caps
-            mod_tags = set(mod.get('tags', []))
-            has_gameplay_tags = any(tag in mod_tags for tag in gameplay_tags_keywords)
-            
-            # Проверка summary на gameplay keywords (mobs, creatures, items, blocks, etc.)
-            summary = mod.get('summary', '').lower()
-            
-            # ВАЖНО: Исключаем graphics контекст (shader/lighting/rendering моды)
-            graphics_context_keywords = [
-                'shader', 'shaders', 'lighting', 'light', 'lights', 'shadow', 'shadows',
-                'render', 'rendering', 'smooth lighting', 'dynamic light', 'iris', 'sodium',
-                'flywheel', 'smooth shading', 'path block', 'visual effect'
-            ]
-            has_graphics_context = any(keyword in summary for keyword in graphics_context_keywords)
-            
-            gameplay_keywords_in_summary = [
-                'mob', 'mobs', 'creature', 'creatures', 'beast', 'beasts', 'monster', 'monsters',
-                'entity', 'entities', 'animal', 'animals', 'boss', 'bosses',
-                'weapon', 'weapons', 'armor', 'armour', 'sword', 'bow', 'shield',
-                'craft', 'crafting',
-                'dungeon', 'dungeons', 'structure', 'structures', 'biome', 'biomes',
-                'adds new', 'new mobs', 'new creatures', 'new items', 'new weapons'
-            ]
-            has_gameplay_summary = any(keyword in summary for keyword in gameplay_keywords_in_summary)
-            
-            # Если это graphics контекст (shader/lighting) → GRAPHICS независимо от упоминания blocks
-            if has_graphics_context:
-                graphics_mods.append(mod)
-                debug_classifications.append(f"🎨 {mod_slug} → GRAPHICS (shader/lighting context)")
-                continue
-            
-            if gameplay_intersection or has_gameplay_tags or has_gameplay_summary:
-                gameplay_mods.append(mod)
-                if gameplay_intersection:
-                    reason = 'gameplay caps'
-                elif has_gameplay_tags:
-                    reason = f'gameplay tags: {list(mod_tags & set(gameplay_tags_keywords))[:2]}'
-                else:
-                    # Найдём какие ключевые слова нашлись
-                    found_keywords = [kw for kw in gameplay_keywords_in_summary if kw in summary]
-                    reason = f'gameplay summary: {found_keywords[:2]}'
-                debug_classifications.append(f"❌ {mod_slug} → GAMEPLAY (graphics + {reason})")
-            else:
-                graphics_mods.append(mod)
-                debug_classifications.append(f"🎨 {mod_slug} → GRAPHICS (caps: {list(graphics_strict_intersection)[:2]})")
-            continue
-        
-        # 2c. Performance capabilities → PERFORMANCE category (lithium, modernfix)
-        perf_intersection = mod_caps_set & performance_caps
-        if perf_intersection:
-            performance_mods.append(mod)
-            debug_classifications.append(f"⚡ {mod_slug} → PERFORMANCE (caps: {list(perf_intersection)[:2]})")
-            continue
-        
-        # 2d. UI capabilities → проверяем контекст
-        ui_intersection = mod_caps_set & ui_caps
-        if ui_intersection:
-            # Проверка: это UI library (рецепты/утилиты) или gameplay UI (HUD/inventory)?
-            # UI library должны иметь api.exposed или dependency.library
-            has_library_caps = bool(mod_caps_set & library_caps)
-            
-            if has_library_caps:
-                # UI + library caps = UI library (REI, JEI)
+            # Распределяем по категориям на основе результата классификации
+            if category == 'library':
                 library_mods.append(mod)
-                debug_classifications.append(f"✅ {mod_slug} → LIBRARY (UI + library caps)")
-                continue
-            
-            # Обычные UI моды (инвентарь, HUD) → GAMEPLAY
-            gameplay_mods.append(mod)
-            debug_classifications.append(f"❌ {mod_slug} → GAMEPLAY (ui caps: {list(ui_intersection)[:2]})")
+                debug_classifications.append(f"✅ {mod_slug} → LIBRARY (weight: {weight}, {reason})")
+            elif category == 'performance':
+                performance_mods.append(mod)
+                debug_classifications.append(f"⚡ {mod_slug} → PERFORMANCE (weight: {weight}, {reason})")
+            elif category == 'graphics':
+                graphics_mods.append(mod)
+                debug_classifications.append(f"🎨 {mod_slug} → GRAPHICS (weight: {weight}, {reason})")
+            else:  # gameplay
+                gameplay_mods.append(mod)
+                debug_classifications.append(f"❌ {mod_slug} → GAMEPLAY (weight: {weight}, {reason})")
             continue
         
-        # 2e. Gameplay capabilities → GAMEPLAY
-        gameplay_intersection = mod_caps_set & gameplay_caps
-        if gameplay_intersection:
-            gameplay_mods.append(mod)
-            debug_classifications.append(f"❌ {mod_slug} → GAMEPLAY (caps: {list(gameplay_intersection)[:2]})")
-            continue
+        # КРИТЕРИЙ 2 (ПРИОРИТЕТ): Обычные моды (не dependencies)
+        # Используем формализованную систему правил с весами
+        category, reason, weight = classify_regular_mod(
+            mod=mod,
+            mod_tags=mod_tags,
+            mod_caps_set=mod_caps_set,
+            mod_name_lower=mod_name_lower,
+            mod_summary_lower=mod_summary_lower,
+            library_tags_set=library_tags_set,
+            library_caps=library_caps,
+            performance_caps=performance_caps,
+            graphics_caps_strict=graphics_caps_strict,
+            gameplay_caps=gameplay_caps,
+            ui_caps=ui_caps
+        )
         
-        # FALLBACK: No recognized capabilities → GAMEPLAY
-        gameplay_mods.append(mod)
-        debug_classifications.append(f"❌ {mod_slug} → GAMEPLAY (no recognized caps)")
+        # Распределяем по категориям на основе результата классификации
+        if category == 'library':
+            library_mods.append(mod)
+            debug_classifications.append(f"✅ {mod_slug} → LIBRARY (weight: {weight}, {reason})")
+        elif category == 'performance':
+            performance_mods.append(mod)
+            debug_classifications.append(f"⚡ {mod_slug} → PERFORMANCE (weight: {weight}, {reason})")
+        elif category == 'graphics':
+            graphics_mods.append(mod)
+            debug_classifications.append(f"🎨 {mod_slug} → GRAPHICS (weight: {weight}, {reason})")
+        else:  # gameplay
+            gameplay_mods.append(mod)
+            debug_classifications.append(f"❌ {mod_slug} → GAMEPLAY (weight: {weight}, {reason})")
+        continue
     
     print(f"   📊 Split: {len(gameplay_mods)} gameplay, {len(graphics_mods)} graphics, {len(performance_mods)} performance, {len(library_mods)} libraries")
     
@@ -670,25 +810,90 @@ def distribute_mods_to_categories(
             library_category = cat['name']
             print(f"   🔍 Found library category by capabilities: '{library_category}'")
         
-        # Graphics category: graphics capabilities (strict)
-        if cat_caps & graphics_caps_strict and not graphics_category:
-            graphics_category = cat['name']
-            print(f"   🔍 Found graphics category by capabilities: '{graphics_category}'")
-        
-        # Performance category: performance capabilities
+        # Performance category: performance capabilities (ПЕРВЫМ, чтобы не перезаписать graphics)
+        # Ищем категорию с performance.optimization capability или похожим названием
         if cat_caps & performance_caps and not performance_category:
-            performance_category = cat['name']
-            print(f"   🔍 Found performance category by capabilities: '{performance_category}'")
+            cat_name_lower = cat['name'].lower()
+            # Приоритет: категории с "performance" или "optimization" в названии
+            if 'performance' in cat_name_lower or 'optimization' in cat_name_lower:
+                # НЕ берем категории с graphics capabilities как performance
+                if not (cat_caps & graphics_caps_strict):
+                    performance_category = cat['name']
+                    print(f"   🔍 Found performance category by capabilities: '{performance_category}'")
+        
+        # Graphics category: graphics capabilities (strict) - ПОСЛЕ performance
+        # ВАЖНО: НЕ берём библиотечные категории для graphics модов
+        if cat_caps & graphics_caps_strict and not graphics_category:
+            # Исключаем библиотечные категории (которые имеют library capabilities)
+            if not (cat_caps & library_caps):
+                graphics_category = cat['name']
+                print(f"   🔍 Found graphics category by capabilities: '{graphics_category}'")
+        
+        # Если performance категория еще не найдена, ищем любую с performance caps (но не graphics)
+        if cat_caps & performance_caps and not performance_category:
+            # НЕ берем категории с graphics capabilities как performance
+            if not (cat_caps & graphics_caps_strict):
+                performance_category = cat['name']
+                print(f"   🔍 Found performance category by capabilities: '{performance_category}'")
     
     # Размещаем моды в найденные категории
     all_distributions = defaultdict(list)
     
-    # Библиотеки
+    # Библиотеки - разделяем на подкатегории если их слишком много (20+)
     if library_category and library_mods:
-        all_distributions[library_category] = library_mods
-        print(f"   📚 Placed {len(library_mods)} libraries into '{library_category}'")
+        if len(library_mods) >= 20:
+            # Разделяем библиотеки на подкатегории
+            api_libs = []  # API библиотеки (api.exposed)
+            core_libs = []  # Core библиотеки (dependency.library, core-mod)
+            compat_libs = []  # Compatibility библиотеки (compatibility.bridge)
+            other_libs = []  # Остальные
+            
+            for lib_mod in library_mods:
+                lib_caps = set(lib_mod.get('capabilities', []))
+                lib_tags = set(lib_mod.get('tags', []))
+                
+                if 'api.exposed' in lib_caps or any('api' in tag for tag in lib_tags):
+                    api_libs.append(lib_mod)
+                elif 'dependency.library' in lib_caps or 'core-mod' in lib_tags:
+                    core_libs.append(lib_mod)
+                elif 'compatibility.bridge' in lib_caps:
+                    compat_libs.append(lib_mod)
+                else:
+                    other_libs.append(lib_mod)
+            
+            # Размещаем по подкатегориям
+            if api_libs:
+                api_cat_name = library_category.replace('Archives', 'APIs').replace('Foundations', 'APIs')
+                all_distributions[api_cat_name] = api_libs
+                print(f"   📚 Placed {len(api_libs)} API libraries into '{api_cat_name}'")
+            
+            if core_libs:
+                core_cat_name = library_category.replace('Archives', 'Core').replace('APIs', 'Core')
+                all_distributions[core_cat_name] = core_libs
+                print(f"   📚 Placed {len(core_libs)} core libraries into '{core_cat_name}'")
+            
+            if compat_libs:
+                compat_cat_name = library_category.replace('Archives', 'Compatibility').replace('Core', 'Compatibility')
+                all_distributions[compat_cat_name] = compat_libs
+                print(f"   📚 Placed {len(compat_libs)} compatibility libraries into '{compat_cat_name}'")
+            
+            if other_libs:
+                all_distributions[library_category] = other_libs
+                print(f"   📚 Placed {len(other_libs)} other libraries into '{library_category}'")
+        else:
+            all_distributions[library_category] = library_mods
+            print(f"   📚 Placed {len(library_mods)} libraries into '{library_category}'")
     elif library_mods:
-        library_category = 'Libraries & APIs'
+        # Создаём тематическое название на основе промпта
+        prompt_lower = user_prompt.lower()
+        if 'medieval' in prompt_lower or 'fantasy' in prompt_lower or 'castle' in prompt_lower:
+            library_category = 'Castle Foundations'
+        elif 'tech' in prompt_lower or 'automation' in prompt_lower:
+            library_category = 'Core Systems'
+        elif 'adventure' in prompt_lower or 'exploration' in prompt_lower:
+            library_category = 'Explorer\'s Toolkit'
+        else:
+            library_category = 'Essential Libraries'
         all_distributions[library_category] = library_mods
         print(f"   ⚠️  No library category found, created fallback '{library_category}'")
     
@@ -706,13 +911,41 @@ def distribute_mods_to_categories(
     
     # Performance моды
     print(f"   🔍 DEBUG: performance_category='{performance_category}', len(performance_mods)={len(performance_mods)}")
+    if performance_mods:
+        # Логируем какие performance моды есть
+        perf_mod_names = [m.get('name', m.get('slug', 'Unknown')) for m in performance_mods]
+        print(f"   🔍 Performance mods found: {', '.join(perf_mod_names[:5])}")
+        if len(performance_mods) > 5:
+            print(f"      ... and {len(performance_mods) - 5} more")
+    
     if performance_category and performance_mods:
-        all_distributions[performance_category] = performance_mods
-        print(f"   ⚡ Placed {len(performance_mods)} performance mods into '{performance_category}'")
+        # Проверяем, что performance_category не совпадает с graphics_category
+        if performance_category == graphics_category:
+            # Если совпадает - создаем отдельную категорию Performance
+            performance_category = 'Performance & Optimization'
+            all_distributions[performance_category] = performance_mods
+            print(f"   ⚡ Placed {len(performance_mods)} performance mods into '{performance_category}' (separated from graphics)")
+        else:
+            all_distributions[performance_category] = performance_mods
+            print(f"   ⚡ Placed {len(performance_mods)} performance mods into '{performance_category}'")
     elif performance_mods:
-        performance_category = 'Performance & Optimization'
-        all_distributions[performance_category] = performance_mods
-        print(f"   ⚠️  No performance category found, created fallback '{performance_category}'")
+        # Если performance моды есть, но категория не найдена - создаём или ищем по названию
+        # Сначала пытаемся найти категорию по названию
+        found_perf_cat = None
+        for cat in categories:
+            cat_name_lower = cat['name'].lower()
+            if 'performance' in cat_name_lower or 'optimization' in cat_name_lower:
+                found_perf_cat = cat['name']
+                break
+        
+        if found_perf_cat:
+            all_distributions[found_perf_cat] = performance_mods
+            performance_category = found_perf_cat
+            print(f"   ⚡ Found performance category by name: '{found_perf_cat}', placed {len(performance_mods)} mods")
+        else:
+            performance_category = 'Performance & Optimization'
+            all_distributions[performance_category] = performance_mods
+            print(f"   ⚠️  No performance category found, created fallback '{performance_category}' with {len(performance_mods)} mods")
     else:
         print(f"   ⚠️  DEBUG: Skipped performance placement (category={performance_category}, mods={len(performance_mods)})")
     
@@ -720,7 +953,17 @@ def distribute_mods_to_categories(
     gameplay_categories = []
     for cat in categories:
         # Пропускаем технические категории
-        if cat['name'] in [library_category, graphics_category, performance_category]:
+        # ВАЖНО: Если performance_category совпадает с graphics_category, мы создали отдельную категорию Performance
+        # Поэтому проверяем оригинальное название категории, а не performance_category переменную
+        cat_name = cat['name']
+        if cat_name == library_category:
+            continue
+        if cat_name == graphics_category and cat_name != performance_category:
+            continue
+        if cat_name == performance_category and cat_name != graphics_category:
+            continue
+        # Если категория совпадает и с graphics, и с performance - пропускаем (она уже обработана)
+        if cat_name == graphics_category and cat_name == performance_category:
             continue
         gameplay_categories.append(cat)
     
@@ -732,11 +975,25 @@ def distribute_mods_to_categories(
     categories_text = []
     
     for i, cat in enumerate(gameplay_categories, 1):
-        categories_text.append(f"{i}. {cat['name']} (target: ~{cat.get('estimated_mods', 0)} mods)")
-        categories_text.append(f"   Description: {cat.get('description', '')}")
-        req_caps = cat.get('required_capabilities', [])
-        if req_caps:
-            categories_text.append(f"   Capabilities: {', '.join(req_caps[:5])}")
+        cat_name = cat['name']
+        cat_desc = cat.get('description', '')
+        cat_caps = cat.get('required_capabilities', []) + cat.get('preferred_capabilities', [])
+        
+        # Добавляем явное описание для критичных категорий (без хардкода конкретных модов)
+        if 'knight' in cat_name.lower() or 'armory' in cat_name.lower():
+            cat_desc = cat_desc or "Weapons and armor EQUIPMENT - mods that add new weapons, shields, armor items"
+        elif 'combat mastery' in cat_name.lower() or 'combat arts' in cat_name.lower():
+            cat_desc = cat_desc or "Combat SYSTEM/MECHANICS - mods that overhaul combat mechanics, combat systems, combat behavior"
+        elif 'performance' in cat_name.lower():
+            cat_desc = cat_desc or "Performance optimization mods - mods that improve FPS, reduce lag, optimize rendering"
+        
+        categories_text.append(f"{i}. {cat_name}")
+        if cat_desc:
+            categories_text.append(f"   Purpose: {cat_desc}")
+        if cat_caps:
+            categories_text.append(f"   Capabilities: {', '.join(cat_caps[:5])}")
+        categories_text.append(f"   Target: ~{cat.get('estimated_mods', 0)} mods")
+        categories_text.append("")  # Пустая строка для читаемости
     
     categories_formatted = "\n".join(categories_text)
     
@@ -751,10 +1008,14 @@ def distribute_mods_to_categories(
         for i, mod in enumerate(batch, 1):  # Локальная нумерация внутри батча (1-30)
             mod_info = [f"{i}. {mod.get('name', mod.get('slug', 'Unknown'))}"]
             
-            # Summary
-            summary = mod.get('summary', mod.get('description', ''))[:150]
+            # Summary - КРИТИЧНО: это основной источник информации о функциональности мода
+            summary = mod.get('summary', mod.get('description', ''))
             if summary:
-                mod_info.append(f"   Summary: {summary}")
+                # Увеличиваем лимит summary для более полной информации
+                summary_text = summary[:250] if len(summary) > 250 else summary
+                mod_info.append(f"   Summary: {summary_text}")
+                if len(summary) > 250:
+                    mod_info.append(f"   [Summary truncated, full length: {len(summary)} chars]")
             
             # Tags
             tags = mod.get('tags', [])
@@ -780,49 +1041,70 @@ def distribute_mods_to_categories(
 Your task: Assign each mod to the BEST matching category based on PATTERN RECOGNITION:
 
 **ANALYSIS PRIORITY (in order):**
-1. **Mod's PRIMARY functionality** (from summary/description)
-   - What does this mod actually DO?
-   - What problem does it solve or feature does it add?
 
-2. **Mod's tags** (categorization hints)
-   - Tags reveal the mod's type (combat, decoration, tech, etc.)
+1. **READ THE SUMMARY FIRST AND CAREFULLY** (HIGHEST PRIORITY)
+   - The summary describes what the mod actually DOES
+   - Look for keywords: "adds", "overhauls", "changes", "improves", "introduces"
+   - If summary says "adds new weapons" → equipment category
+   - If summary says "overhauls combat system" → combat mechanics category
+   - Summary is the PRIMARY source of truth - trust it over everything else
+
+2. **Match summary meaning to category purpose**
+   - Read the category's "Purpose" field
+   - Does the mod's summary match the category's purpose?
+   - Equipment mods (weapons, armor) → equipment categories
+   - System mods (combat system, progression) → system/mechanics categories
+
+3. **Mod's capabilities** (confirmation only)
+   - Capabilities confirm what the summary says
+   - If summary and capabilities conflict, trust the summary
+   - Use capabilities to understand technical scope, not primary function
+
+4. **Mod's tags** (secondary confirmation)
+   - Tags provide additional context
    - Use tags to confirm what the summary says
+   - Don't rely solely on tags - summary is more important
 
-3. **Mod's capabilities** (technical features)
-   - Capabilities are prefixes like "combat.", "worldgen.", "decoration."
-   - Match capability PREFIXES to category themes
-   - Example: "combat.melee" mod → Combat-themed category
-
-4. **Category's theme and description**
-   - Each category has a THEME and PURPOSE
-   - Match mod's functionality to category's theme
+5. **Category's theme and description**
+   - Each category has a THEME and PURPOSE (read the "Purpose" field)
+   - Match mod's PRIMARY function (from summary) to category's purpose
    - Don't force mods into unrelated categories
 
-**PATTERN MATCHING EXAMPLES:**
+**ANALYSIS METHODOLOGY:**
 
-✅ CORRECT:
-- "Sword mod with new weapons" + tags:[weapon] + caps:[combat] → "Knightly Armory" (equipment)
-- "Combat system overhaul" + caps:[combat.system] → "Combat Arts" (mechanics/skills)
-- "Decorative blocks for castles" + tags:[decoration, building] → "Castle Architecture"
-- "Shaders for lighting" + tags:[visual, graphics] → "Enchanted Visuals"
-- "Biome overhaul" + capabilities:[worldgen.biome] → "Fantasy Realms" / "Medieval Lands"
-- "Tech machines & automation" + caps:[tech.machines] → "Courtly Interface" / "Artisan Crafting"
-- "REI/JEI recipe viewer" + tags:[utility] + caps:[ui] → DO NOT distribute (already library)
+1. **READ THE SUMMARY FIRST** - The summary tells you what the mod actually DOES
+   - If summary says "adds new weapons" → equipment category
+   - If summary says "overhauls combat system" → combat mechanics category
+   - If summary says "adds decorative blocks" → decoration/building category
+   - Summary is the PRIMARY source of truth for mod functionality
 
-❌ INCORRECT:
-- Weapons/armor mod → "Combat Arts" (wrong: that's for skills/mechanics, use "Knightly Armory")
-- Tech mod → "Medieval Settlements" (wrong: tech is crafting/automation, not villages)
-- Recipe viewer (REI) → Any gameplay category (wrong: it's UI utility, should be library)
-- Random mod → First category in list (wrong: lazy matching)
+2. **Match summary meaning to category purpose:**
+   - Equipment/items mods (weapons, armor, tools) → "Knight's Arsenal" / "Royal Armory" type categories
+   - System/mechanics mods (combat system, progression system) → "Combat Mastery" / "Combat Arts" type categories
+   - Building/decoration mods → "Castle Architecture" / "Courtly Decor" type categories
+   - Visual/graphics mods → "Enchanted Visuals" / "Atmospheric Lighting" type categories
+
+3. **Use capabilities as confirmation:**
+   - Capabilities confirm what the summary says
+   - If summary and capabilities conflict, trust the summary (it's more descriptive)
+
+4. **Category purpose matters:**
+   - Read each category's "Purpose" field carefully
+   - Match mod's PRIMARY function (from summary) to category's purpose
+   - Don't force mods into categories that don't match their primary function
 
 **STRICT RULES:**
 - ONLY gameplay mods in this batch (libraries already separated)
-- Match by ACTUAL FUNCTIONALITY and THEME
-- DO NOT randomly assign mods
+- **READ EACH MOD'S SUMMARY CAREFULLY** - it describes what the mod actually does
+- Match mod's PRIMARY function (from summary) to category's purpose (from description)
+- If summary says "adds weapons/armor" → equipment category (Knight's Arsenal, Royal Armory)
+- If summary says "overhauls combat system" or "changes combat mechanics" → combat mechanics category (Combat Mastery, Combat Arts)
+- If summary says "adds blocks" or "decoration" → building/decoration category
+- DO NOT randomly assign mods - always base decision on summary content
 - DO NOT put gameplay mods into technical/foundation categories
 - Distribute evenly across relevant categories
-- If a mod fits multiple categories, choose the PRIMARY purpose
-- If truly unsure, choose closest thematic match
+- If a mod fits multiple categories, choose the PRIMARY purpose based on summary
+- If truly unsure, choose closest thematic match based on summary meaning
 
 **VALIDATION:**
 - Every mod MUST be assigned to exactly ONE category
@@ -980,27 +1262,66 @@ Assign each mod to the best category. Return ONLY valid JSON."""
         all_mod_ids.add(mod_id)
     
     unassigned_mods = []
+    unassigned_dependencies = []
+    
     for mod in mods + library_mods + graphics_mods + performance_mods:
         mod_id = mod.get('source_id', mod.get('project_id', ''))
         if mod_id not in assigned_mods:
             unassigned_mods.append(mod)
+            # Отдельно отслеживаем зависимости
+            if mod.get('_added_as_dependency', False):
+                unassigned_dependencies.append(mod)
     
     if unassigned_mods:
         print(f"   ⚠️  Found {len(unassigned_mods)} unassigned mods")
         
-        # Fallback: создаём категорию General если её нет
-        general_category = None
-        for cat in categories:
-            if 'general' in cat['name'].lower() or 'misc' in cat['name'].lower():
-                general_category = cat['name']
-                break
+        # КРИТИЧНО: Зависимости должны попасть в библиотечную категорию
+        if unassigned_dependencies:
+            print(f"      ⚠️  CRITICAL: {len(unassigned_dependencies)} dependencies not assigned!")
+            for dep in unassigned_dependencies[:5]:
+                dep_name = dep.get('name', dep.get('slug', 'Unknown'))
+                print(f"         - {dep_name} (source_id: {dep.get('source_id', 'unknown')[:8]}...)")
+            if len(unassigned_dependencies) > 5:
+                print(f"         ... and {len(unassigned_dependencies) - 5} more dependencies")
+            
+            # Автоматически добавляем зависимости в библиотечную категорию
+            if library_category:
+                all_distributions[library_category].extend(unassigned_dependencies)
+                print(f"      ✅ Auto-placed {len(unassigned_dependencies)} dependencies into '{library_category}'")
+            else:
+                # Если библиотечной категории нет - создаём тематическое название на основе промпта
+                # Пытаемся создать тематическое название на основе user_prompt
+                prompt_lower = user_prompt.lower()
+                if 'medieval' in prompt_lower or 'fantasy' in prompt_lower or 'castle' in prompt_lower:
+                    library_category = 'Castle Foundations'
+                elif 'tech' in prompt_lower or 'automation' in prompt_lower:
+                    library_category = 'Core Systems'
+                elif 'adventure' in prompt_lower or 'exploration' in prompt_lower:
+                    library_category = 'Explorer\'s Toolkit'
+                else:
+                    library_category = 'Essential Libraries'  # Более нейтральное, но не "Libraries & APIs"
+                all_distributions[library_category] = unassigned_dependencies
+                print(f"      ✅ Created '{library_category}' category for {len(unassigned_dependencies)} dependencies")
+            
+            # Убираем зависимости из unassigned_mods
+            unassigned_mods = [m for m in unassigned_mods if not m.get('_added_as_dependency', False)]
         
-        if not general_category:
-            general_category = 'General'
-            print(f"   ➕ Creating fallback category: '{general_category}'")
-        
-        all_distributions[general_category].extend(unassigned_mods)
-        print(f"   ✅ Placed {len(unassigned_mods)} unassigned mods into '{general_category}'")
+        # Остальные нераспределённые моды идём в General
+        if unassigned_mods:
+            # Fallback: создаём категорию General если её нет
+            general_category = None
+            for cat in categories:
+                if 'general' in cat['name'].lower() or 'misc' in cat['name'].lower():
+                    general_category = cat['name']
+                    break
+            
+            if not general_category:
+                general_category = 'General'
+                all_distributions[general_category] = []
+                print(f"   ➕ Creating fallback category: '{general_category}'")
+            
+            all_distributions[general_category].extend(unassigned_mods)
+            print(f"   ✅ Placed {len(unassigned_mods)} unassigned mods into '{general_category}'")
     else:
         print(f"   ✅ All mods assigned")
     

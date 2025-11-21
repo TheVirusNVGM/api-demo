@@ -26,6 +26,7 @@ import sys
 import uuid
 import time
 import requests
+import json
 
 sys.path.insert(0, os.path.dirname(__file__))
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
@@ -43,13 +44,34 @@ from modpack_summary import generate_modpack_summary
 from smart_categorizer import SmartCategorizer
 from build_recorder import save_modpack_build, submit_feedback
 from ai_sort_feedback import submit_sort_feedback
+from crash_doctor.analyze import analyze_and_fix_crash
+from crash_doctor_sse import analyze_crash_with_sse
+from build_board_sse import build_board_with_sse_full
 from config import DEEPSEEK_API_KEY, SUPABASE_URL, SUPABASE_KEY, CONNECTOR_MODS, BOARD_LAYOUT, CATEGORY_COLORS
 from auth import require_subscription
 from request_logger import get_request_logger
 from rate_limiter import get_rate_limiter
 
 app = Flask(__name__)
-CORS(app)  # Инициализируем CORS СРАЗУ после создания app
+# CORS configuration - разрешаем известные origins
+# Список включает production домены, localhost для dev, и Tauri origins
+CORS(app, 
+     origins=[
+         # Production domains
+         "https://astral-ai.online",
+         "https://www.astral-ai.online",
+         "https://api.astral-ai.online",
+         # Localhost для разработки (regex для любого порта)
+         r"http://localhost:\d+",
+         r"http://127\.0\.0\.1:\d+",
+         # Tauri приложения
+         "http://tauri.localhost",
+         "tauri://localhost",
+     ],
+     allow_headers=["Content-Type", "Authorization", "X-API-Key", "Accept"],
+     expose_headers=["Content-Type"],
+     supports_credentials=True,
+     methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"])
 
 
 @app.before_request
@@ -58,13 +80,21 @@ def log_request_info():
     if request.path == '/health':
         print(f"[REQUEST] GET /health from {request.remote_addr}")
     else:
+        origin = request.headers.get('Origin', 'No Origin')
+        referer = request.headers.get('Referer', 'No Referer')
         print(f"\n[REQUEST] {request.method} {request.path} from {request.remote_addr}")
-        if request.is_json:
+        print(f"   Origin: {origin}")
+        print(f"   Referer: {referer}")
+        print(f"   Headers: Accept={request.headers.get('Accept', 'N/A')}, Content-Type={request.headers.get('Content-Type', 'N/A')}")
+        print(f"   Authorization: {'Present' if request.headers.get('Authorization') else 'Missing'}")
+        if request.method == 'POST' and request.is_json:
             try:
                 data = request.get_json(silent=True)
                 if data and isinstance(data, dict):
                     keys = list(data.keys())[:5]
                     print(f"   Body keys: {keys}")
+                    if 'prompt' in data:
+                        print(f"   Prompt: {data['prompt'][:50]}...")
             except:
                 pass
 
@@ -349,19 +379,108 @@ def api_build_board_state():
     AI сборка модпака в формате board_state.json
     
     Создаёт готовый файл который можно импортировать в лаунчер
+    Поддерживает SSE streaming для прогресса
     """
-    start_time = time.time()
-    stage_timings = {}
-    
+    print(f"\n{'='*80}")
+    print(f"[BUILD-BOARD] POST request received!")
+    print(f"{'='*80}")
     try:
+        # Проверяем Accept header для SSE
+        accept_header = request.headers.get('Accept', '')
+        use_sse = 'text/event-stream' in accept_header
+        print(f"[BUILD-BOARD] Accept header: {accept_header}, SSE mode: {use_sse}")
+        
         data = request.json
         
         # Валидация
         if not data or 'prompt' not in data:
+            if use_sse:
+                from flask import Response
+                return Response(
+                    "event: error\ndata: " + json.dumps({
+                        'error': 'Invalid request',
+                        'message': 'prompt is required'
+                    }) + "\n\n",
+                    mimetype='text/event-stream'
+                )
             return jsonify({
                 'error': 'Invalid request',
                 'message': 'prompt is required'
             }), 400
+        
+        # Rate limiting check
+        rate_limiter = get_rate_limiter(SUPABASE_URL, SUPABASE_KEY)
+        allowed, error_msg = rate_limiter.check_limit(
+            user_id=g.user_id,
+            subscription_tier=g.subscription_tier,
+            max_mods=data.get('max_mods', 30)
+        )
+        
+        if not allowed:
+            print(f"⛔ [Rate Limit] {g.user_id} blocked: {error_msg}")
+            if use_sse:
+                from flask import Response
+                return Response(
+                    "event: error\ndata: " + json.dumps({
+                        'error': 'Rate limit exceeded',
+                        'message': error_msg
+                    }) + "\n\n",
+                    mimetype='text/event-stream'
+                )
+            return jsonify({
+                'error': 'Rate limit exceeded',
+                'message': error_msg
+            }), 429
+        
+        if use_sse:
+            # SSE streaming версия
+            from flask import Response
+            
+            # Получаем user_id ДО создания генератора (когда контекст ещё доступен)
+            user_id = g.user_id if hasattr(g, 'user_id') else None
+            subscription_tier = g.subscription_tier if hasattr(g, 'subscription_tier') else 'free'
+            
+            def generate():
+                # Создаём mock объект g для передачи в SSE функцию
+                class MockG:
+                    def __init__(self, user_id, subscription_tier):
+                        self.user_id = user_id
+                        self.subscription_tier = subscription_tier
+                
+                mock_g = MockG(user_id, subscription_tier)
+                
+                # Передаём user_id и subscription_tier напрямую, так как g недоступен в генераторе
+                for chunk in build_board_with_sse_full(
+                    data=data,
+                    g=mock_g,
+                    DEEPSEEK_API_KEY=DEEPSEEK_API_KEY,
+                    SUPABASE_URL=SUPABASE_URL,
+                    SUPABASE_KEY=SUPABASE_KEY,
+                    CONNECTOR_MODS=CONNECTOR_MODS,
+                    BOARD_LAYOUT=BOARD_LAYOUT,
+                    CATEGORY_COLORS=CATEGORY_COLORS,
+                    get_rate_limiter=get_rate_limiter,
+                    build_modpack_v2=build_modpack_v2,
+                    build_modpack_v3=build_modpack_v3,
+                    resolve_dependencies=resolve_dependencies,
+                    get_fabric_compat_manager=get_fabric_compat_manager,
+                    save_modpack_build=save_modpack_build,
+                    generate_modpack_summary=generate_modpack_summary
+                ):
+                    yield chunk
+            
+            return Response(
+                generate(),
+                mimetype='text/event-stream',
+                headers={
+                    'Cache-Control': 'no-cache',
+                    'X-Accel-Buffering': 'no'
+                }
+            )
+        
+        # Обычный JSON ответ (fallback)
+        start_time = time.time()
+        stage_timings = {}
         
         prompt = data['prompt']
         mc_version = data.get('mc_version', '1.21.1')
@@ -375,21 +494,6 @@ def api_build_board_state():
         print(f"   Current mods: {len(current_mods)}")
         print(f"   Version: {mc_version}, Loader: {mod_loader}, Max: {max_mods}")
         print(f"   Fabric Compat: {'ENABLED' if fabric_compat_mode else 'DISABLED'}")
-        
-        # Rate limiting check
-        rate_limiter = get_rate_limiter(SUPABASE_URL, SUPABASE_KEY)
-        allowed, error_msg = rate_limiter.check_limit(
-            user_id=g.user_id,
-            subscription_tier=g.subscription_tier,
-            max_mods=max_mods
-        )
-        
-        if not allowed:
-            print(f"⛔ [Rate Limit] {g.user_id} blocked: {error_msg}")
-            return jsonify({
-                'error': 'Rate limit exceeded',
-                'message': error_msg
-            }), 429
         
         # Проверяем версию API
         use_v3 = data.get('use_v3_architecture', True)
@@ -424,12 +528,18 @@ def api_build_board_state():
         
         stage_start = time.time()
         deps_before = len(result['mods'])
+        # Получаем Fabric Compatibility моды для фильтрации
+        fabric_compat_manager = get_fabric_compat_manager()
+        FABRIC_FIX_IDS = fabric_compat_manager.config['auto_enable_triggers']['connector_mods']
+        
         result['mods'] = resolve_dependencies(
             selected_mods=result['mods'],
             mc_version=mc_version,
             mod_loader=mod_loader,
             supabase_url=SUPABASE_URL,
-            supabase_key=SUPABASE_KEY
+            supabase_key=SUPABASE_KEY,
+            fabric_compat_mode=fabric_compat_mode,
+            fabric_fix_ids=FABRIC_FIX_IDS
             # max_total_mods удален - dependencies больше не ограничены
         )
         deps_added = len(result['mods']) - deps_before
@@ -1389,6 +1499,7 @@ def api_categorization_feedback():
 
 
 @app.route('/api/feedback/ai-sort', methods=['POST'])
+@require_subscription  # Защита: только test/premium/pro
 def api_ai_sort_feedback():
     """
     Принимает оценку (1-5 звёзд) для AI auto-sort сессии
@@ -1493,6 +1604,138 @@ def api_feedback():
         }), 500
 
 
+@app.route('/api/ai/crash-doctor/analyze', methods=['POST'])
+@require_subscription  # Защита: только test/premium/pro
+def api_crash_doctor_analyze():
+    """
+    Crash Doctor - анализ крашлогов с AI и предложение фиксов
+    
+    Поддерживает SSE streaming для прогресса
+    
+    Защита от спама:
+    - Rate limiting через require_subscription
+    - Кеш логов для предотвращения повторной обработки (1 час TTL)
+    """
+    try:
+        # Rate limiting check
+        rate_limiter = get_rate_limiter(SUPABASE_URL, SUPABASE_KEY)
+        allowed, error_msg = rate_limiter.check_limit(
+            user_id=g.user_id,
+            subscription_tier=g.subscription_tier,
+            max_mods=0  # Crash Doctor не зависит от количества модов
+        )
+        
+        if not allowed:
+            print(f"⛔ [Rate Limit] {g.user_id} blocked: {error_msg}")
+            accept_header = request.headers.get('Accept', '')
+            use_sse = 'text/event-stream' in accept_header
+            
+            if use_sse:
+                from flask import Response
+                return Response(
+                    "event: error\ndata: " + json.dumps({
+                        'error': 'Rate limit exceeded',
+                        'message': error_msg
+                    }) + "\n\n",
+                    mimetype='text/event-stream'
+                )
+            return jsonify({
+                'error': 'Rate limit exceeded',
+                'message': error_msg
+            }), 429
+        
+        # Проверяем Accept header для SSE
+        accept_header = request.headers.get('Accept', '')
+        use_sse = 'text/event-stream' in accept_header
+        
+        data = request.json
+        
+        if not data or 'crash_log' not in data or 'board_state' not in data:
+            if use_sse:
+                from flask import Response
+                return Response(
+                    "event: error\ndata: " + json.dumps({
+                        'error': 'Invalid request',
+                        'message': 'crash_log and board_state are required'
+                    }) + "\n\n",
+                    mimetype='text/event-stream'
+                )
+            return jsonify({
+                'error': 'Invalid request',
+                'message': 'crash_log and board_state are required'
+            }), 400
+        
+        if use_sse:
+            # SSE streaming версия
+            from flask import Response
+            
+            # Получаем user_id ДО создания генератора (когда контекст ещё доступен)
+            user_id = g.user_id if hasattr(g, 'user_id') else None
+            
+            def generate():
+                # Передаём user_id напрямую, так как g недоступен в генераторе
+                for chunk in analyze_crash_with_sse(
+                    data=data,
+                    user_id=user_id,
+                    DEEPSEEK_API_KEY=DEEPSEEK_API_KEY,
+                    SUPABASE_URL=SUPABASE_URL,
+                    SUPABASE_KEY=SUPABASE_KEY,
+                    analyze_and_fix_crash=analyze_and_fix_crash
+                ):
+                    yield chunk
+            
+            return Response(
+                generate(),
+                mimetype='text/event-stream',
+                headers={
+                    'Cache-Control': 'no-cache',
+                    'X-Accel-Buffering': 'no'
+                }
+            )
+        else:
+            # Обычный JSON ответ (fallback)
+            result = analyze_and_fix_crash(
+                crash_log=data['crash_log'],
+                board_state=data['board_state'],
+                game_log=data.get('game_log'),
+                mc_version=data.get('mc_version'),
+                mod_loader=data.get('mod_loader'),
+                deepseek_key=DEEPSEEK_API_KEY
+            )
+            
+            if result.get('success'):
+                return jsonify(result)
+            else:
+                return jsonify({
+                    'error': 'Analysis failed',
+                    'message': result.get('error', 'Unknown error'),
+                    'confidence': result.get('confidence', 0.0)
+                }), 500
+    
+    except Exception as e:
+        print(f"❌ [Crash Doctor API] Error: {e}")
+        import traceback
+        traceback.print_exc()
+        
+        accept_header = request.headers.get('Accept', '')
+        use_sse_error = 'text/event-stream' in accept_header
+        
+        if use_sse_error:
+            from flask import Response
+            return Response(
+                "event: error\ndata: " + json.dumps({
+                    'error': 'Internal server error',
+                    'message': str(e)
+                }) + "\n\n",
+                mimetype='text/event-stream'
+            )
+        
+        return jsonify({
+            'error': 'Internal server error',
+            'message': str(e)
+        }), 500
+
+
 # Экспортируем app для Vercel
 # Vercel автоматически запустит Flask app
 if __name__ != '__main__':
@@ -1503,8 +1746,13 @@ else:
     print("=" * 60)
     print("ASTRAL AI API Server")
     print("=" * 60)
-    print(f"Server running on: http://localhost:5000")
-    print(f"Health check: http://localhost:5000/health")
+    # Не выводим URL в production для безопасности
+    is_production = os.getenv('FLASK_ENV') == 'production' or os.getenv('PRODUCTION') == 'true'
+    if not is_production:
+        print(f"Server running on: http://localhost:5000")
+        print(f"Health check: http://localhost:5000/health")
+    else:
+        print("Server running in production mode")
     
     # Cleanup old logs (keep last 4 weeks)
     try:
@@ -1517,17 +1765,20 @@ else:
     print(f"  POST /api/ai/build       - Build modpack from prompt")
     print(f"  POST /api/ai/build-board - Build modpack as board_state.json (protected)")
     print(f"  POST /api/ai/auto-sort   - Auto-sort mods into categories (protected)")
+    print(f"  POST /api/ai/crash-doctor/analyze - Analyze crash logs and suggest fixes (protected, SSE)")
     print(f"  POST /api/get-mod-tags             - Get custom tags for mods")
     print(f"  POST /api/feedback                 - Submit mod incompatibility feedback")
     print(f"  POST /api/feedback/categorization  - Submit categorization feedback")
-    print(f"  POST /api/feedback/ai-sort         - Submit AI sort feedback")
+    print(f"  POST /api/feedback/ai-sort         - Submit AI sort feedback (protected)")
     print("=" * 60)
     
-    # Диагностика
-    print("\n[DEBUG] Flask app created successfully!")
-    print("[DEBUG] Registered routes:")
-    for rule in app.url_map.iter_rules():
-        print(f"   {rule.methods} {rule.rule}")
+    # Диагностика (только в dev режиме)
+    is_production = os.getenv('FLASK_ENV') == 'production' or os.getenv('PRODUCTION') == 'true'
+    if not is_production:
+        print("\n[DEBUG] Flask app created successfully!")
+        print("[DEBUG] Registered routes:")
+        for rule in app.url_map.iter_rules():
+            print(f"   {rule.methods} {rule.rule}")
     
     # Выбор сервера
     use_waitress = os.getenv('USE_WAITRESS', 'false').lower() == 'true'

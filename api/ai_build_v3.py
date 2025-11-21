@@ -199,6 +199,22 @@ def build_themed_modpack(
     Architecture-first flow для themed modpacks
     """
     
+    # STEP 0: LOAD BASELINE MODS (before architecture planning)
+    print("[STEP 0] Baseline Mods Loader")
+    print("-" * 80)
+    
+    from architecture_planner import load_baseline_mods
+    
+    baseline_mods = load_baseline_mods(
+        mc_version=mc_version,
+        mod_loader=mod_loader,
+        supabase_url=supabase_url,
+        supabase_key=supabase_key,
+        fabric_compat_mode=fabric_compat_mode
+    )
+    
+    print()
+    
     # LAYER 1.5: ARCHITECTURE PLANNER
     print("[LAYER 1.5] Architecture Planner")
     print("-" * 80)
@@ -225,17 +241,15 @@ def build_themed_modpack(
             )
         
         capability_patterns = extract_capability_patterns(
-            reference_modpacks,
-            supabase_url=supabase_url,
-            supabase_key=supabase_key,
-            mod_loader=mod_loader,
-            fabric_compat_mode=fabric_compat_mode
+            reference_modpacks=reference_modpacks,
+            baseline_mods=baseline_mods
         )
         
         planned_architecture = plan_architecture(
             user_prompt=prompt,
             reference_modpacks=reference_modpacks,
             capability_patterns=capability_patterns,
+            baseline_mods=baseline_mods,
             max_mods=max_mods,
             deepseek_key=deepseek_key
         )
@@ -313,7 +327,8 @@ def build_themed_modpack(
     candidates = execute_search_plan(
         search_plan=search_plan,
         supabase_url=supabase_url,
-        supabase_key=supabase_key
+        supabase_key=supabase_key,
+        fabric_compat_mode=fabric_compat_mode  # Передаём параметр!
     )
     
     pipeline.set_candidates(candidates)
@@ -343,7 +358,8 @@ def build_themed_modpack(
         max_mods=max_mods,
         deepseek_key=deepseek_key,
         reference_context=None,  # Architecture уже передан через planned_architecture
-        planned_architecture=planned_architecture
+        planned_architecture=planned_architecture,
+        baseline_mods=baseline_mods  # Передаём baseline моды для автоматического добавления
     )
     
     pipeline.set_selected_mods(result['mods'])
@@ -414,7 +430,8 @@ def build_simple_modpack(
     candidates = execute_search_plan(
         search_plan=search_plan,
         supabase_url=supabase_url,
-        supabase_key=supabase_key
+        supabase_key=supabase_key,
+        fabric_compat_mode=fabric_compat_mode  # Передаём параметр!
     )
     
     # Performance optimization enrichment

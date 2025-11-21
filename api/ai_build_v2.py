@@ -105,7 +105,8 @@ def build_modpack(
     candidates = execute_search_plan(
         search_plan=search_plan,
         supabase_url=supabase_url,
-        supabase_key=supabase_key
+        supabase_key=supabase_key,
+        fabric_compat_mode=fabric_compat_mode  # Передаём параметр!
     )
     
     # Обогащаем candidates layer metadata для performance-запросов

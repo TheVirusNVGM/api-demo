@@ -141,7 +141,8 @@ def select_final_mods(
     max_mods: int,
     deepseek_key: str,
     reference_context: str = None,
-    planned_architecture: Dict = None
+    planned_architecture: Dict = None,
+    baseline_mods: List[Dict] = None
 ) -> Dict:
     """
     OPTIMIZED: Финальный отбор модов с локальным предвыбором.
@@ -166,11 +167,88 @@ def select_final_mods(
     start_time = time.time()
     print(f"🎯 [Final Selector] Selecting best {max_mods} mods from {len(candidates)} candidates...")
     
+    # BASELINE: Автоматически добавляем baseline моды (они не считаются в max_mods)
+    baseline_added = []
+    baseline_source_ids = set()
+    
+    if baseline_mods:
+        print(f"   📌 [Baseline] Adding {len(baseline_mods)} baseline mods automatically...")
+        
+        # Создаём set source_id кандидатов для быстрого поиска
+        candidates_source_ids = {mod.get('source_id') for mod in candidates if mod.get('source_id')}
+        
+        for baseline_mod in baseline_mods:
+            baseline_source_id = baseline_mod.get('source_id')
+            if not baseline_source_id:
+                continue
+            
+            # Проверяем: есть ли baseline мод уже в candidates?
+            baseline_in_candidates = any(
+                mod.get('source_id') == baseline_source_id 
+                for mod in candidates
+            )
+            
+            if baseline_in_candidates:
+                # Baseline мод уже в candidates - он будет выбран автоматически
+                baseline_source_ids.add(baseline_source_id)
+                baseline_added.append(baseline_mod['name'])
+            else:
+                # Baseline мод не в candidates - добавляем его как "скрытый" кандидат
+                # (он будет добавлен в финальный результат автоматически)
+                baseline_source_ids.add(baseline_source_id)
+                baseline_added.append(baseline_mod['name'])
+        
+        if baseline_added:
+            print(f"   ✅ Baseline mods to include: {', '.join(baseline_added[:5])}")
+            if len(baseline_added) > 5:
+                print(f"      ... and {len(baseline_added) - 5} more")
+            print(f"   ℹ️  Baseline mods are NOT counted in mod limit (they're the foundation)")
+    
+    # Логируем все кандидаты для отладки
+    print(f"   📋 All candidates ({len(candidates)} mods):")
+    candidates_slugs = []
+    for i, mod in enumerate(candidates[:20], 1):  # Показываем первые 20
+        slug = mod.get('slug', 'unknown')
+        name = mod.get('name', 'unknown')
+        candidates_slugs.append(slug)
+        print(f"      {i}. {name} ({slug})")
+    if len(candidates) > 20:
+        print(f"      ... and {len(candidates) - 20} more")
+    
     # Fast path 1: если кандидатов меньше чем надо - возвращаем все
     if len(candidates) <= max_mods:
         print(f"   ⚡ Fast path: {len(candidates)} <= {max_mods}, returning all candidates")
+        
+        # BASELINE: Добавляем baseline моды если их нет
+        result_mods = candidates.copy()
+        if baseline_mods:
+            candidates_source_ids = {mod.get('source_id') for mod in candidates if mod.get('source_id')}
+            for baseline_mod in baseline_mods:
+                baseline_source_id = baseline_mod.get('source_id')
+                if baseline_source_id and baseline_source_id not in candidates_source_ids:
+                    # Ищем в candidates или создаём запись
+                    baseline_found = None
+                    for candidate in candidates:
+                        if candidate.get('source_id') == baseline_source_id:
+                            baseline_found = candidate.copy()
+                            break
+                    
+                    if baseline_found:
+                        baseline_found['_added_as_baseline'] = True
+                        result_mods.append(baseline_found)
+                    else:
+                        baseline_entry = {
+                            'source_id': baseline_source_id,
+                            'name': baseline_mod['name'],
+                            'slug': baseline_mod.get('slug', ''),
+                            'capabilities': baseline_mod.get('capabilities', []),
+                            'tags': baseline_mod.get('tags', []),
+                            '_added_as_baseline': True
+                        }
+                        result_mods.append(baseline_entry)
+        
         return {
-            'mods': candidates,
+            'mods': result_mods,
             'explanation': 'Fast-path selection: all candidates fit within limit',
             '_tokens': {
                 'prompt_tokens': 0,
@@ -187,10 +265,49 @@ def select_final_mods(
         max_mods
     )
     
+    # Логируем preselected кандидаты
+    print(f"   📋 Preselected candidates ({len(trimmed_candidates)} mods):")
+    preselected_slugs = []
+    for i, mod in enumerate(trimmed_candidates[:20], 1):  # Показываем первые 20
+        slug = mod.get('slug', 'unknown')
+        name = mod.get('name', 'unknown')
+        preselected_slugs.append(slug)
+        print(f"      {i}. {name} ({slug})")
+    if len(trimmed_candidates) > 20:
+        print(f"      ... and {len(trimmed_candidates) - 20} more")
+    
     # Fast path 2: после предвыбора всё влезает - skip AI
     if len(trimmed_candidates) <= max_mods:
         print(f"   ⚡ Fast path 2: after preselect {len(trimmed_candidates)} <= {max_mods}, skipping AI")
         selected = ensure_libraries(trimmed_candidates, candidates)
+        
+        # BASELINE: Добавляем baseline моды если их нет
+        if baseline_mods:
+            selected_source_ids = {mod.get('source_id') for mod in selected if mod.get('source_id')}
+            for baseline_mod in baseline_mods:
+                baseline_source_id = baseline_mod.get('source_id')
+                if baseline_source_id and baseline_source_id not in selected_source_ids:
+                    # Ищем в candidates
+                    baseline_found = None
+                    for candidate in candidates:
+                        if candidate.get('source_id') == baseline_source_id:
+                            baseline_found = candidate.copy()
+                            break
+                    
+                    if baseline_found:
+                        baseline_found['_added_as_baseline'] = True
+                        selected.append(baseline_found)
+                    else:
+                        baseline_entry = {
+                            'source_id': baseline_source_id,
+                            'name': baseline_mod['name'],
+                            'slug': baseline_mod.get('slug', ''),
+                            'capabilities': baseline_mod.get('capabilities', []),
+                            'tags': baseline_mod.get('tags', []),
+                            '_added_as_baseline': True
+                        }
+                        selected.append(baseline_entry)
+        
         return {
             'mods': selected,
             'explanation': 'Architecture-based preselect, AI skipped for efficiency',
@@ -201,12 +318,6 @@ def select_final_mods(
                 'cost_usd': 0.0,
             }
         }
-    
-    # Логируем топ-5 из отфильтрованных
-    if len(trimmed_candidates) > 0:
-        print(f"   📋 Top 5 preselected candidates:")
-        for i, mod in enumerate(trimmed_candidates[:5], 1):
-            print(f"      {i}. {mod.get('name')} ({mod.get('slug')})")
     
     # Формируем промпт (теперь гораздо короче)
     candidates_text = format_candidates(trimmed_candidates)  # было [:100], стало все
@@ -354,8 +465,10 @@ Return your selection in JSON format."""
         # Детальное логирование ответа AI
         print(f"📋 [Final Selector] AI Response:")
         print(f"   Mods in response: {len(selection.get('mods', []))}")
+        ai_selected_slugs = []
         if len(selection.get('mods', [])) > 0:
-            print(f"   Mod slugs: {[m.get('slug') for m in selection.get('mods', [])]}")
+            ai_selected_slugs = [m.get('slug') for m in selection.get('mods', [])]
+            print(f"   Mod slugs: {ai_selected_slugs}")
         else:
             print(f"   ⚠️  AI returned EMPTY mods array!")
             print(f"   Full response: {json.dumps(selection, indent=2)}")
@@ -363,6 +476,7 @@ Return your selection in JSON format."""
         # Обогащаем данными из trimmed_candidates (не из всех candidates)
         candidates_dict = {m['slug']: m for m in trimmed_candidates}
         selected_mods = []
+        missing_slugs = []  # Моды, которые AI выбрал, но их нет в кандидатах
         
         for mod_selection in selection.get('mods', []):
             slug = mod_selection.get('slug')
@@ -370,8 +484,63 @@ Return your selection in JSON format."""
                 mod_data = candidates_dict[slug].copy()
                 mod_data['ai_reason'] = mod_selection.get('reason', '')
                 selected_mods.append(mod_data)
+            else:
+                missing_slugs.append(slug)
+        
+        if missing_slugs:
+            print(f"   ⚠️  AI selected {len(missing_slugs)} mods not in preselected candidates: {missing_slugs}")
         
         print(f"✅ [Final Selector] Selected {len(selected_mods)} mods")
+        
+        # BASELINE: Добавляем baseline моды автоматически (если их ещё нет)
+        if baseline_mods:
+            selected_source_ids = {mod.get('source_id') for mod in selected_mods if mod.get('source_id')}
+            
+            for baseline_mod in baseline_mods:
+                baseline_source_id = baseline_mod.get('source_id')
+                if not baseline_source_id:
+                    continue
+                
+                # Если baseline мод уже выбран - пропускаем
+                if baseline_source_id in selected_source_ids:
+                    continue
+                
+                # Ищем baseline мод в candidates (для получения полных данных)
+                baseline_in_candidates = None
+                for candidate in candidates:
+                    if candidate.get('source_id') == baseline_source_id:
+                        baseline_in_candidates = candidate.copy()
+                        break
+                
+                if baseline_in_candidates:
+                    # Используем данные из candidates
+                    baseline_in_candidates['_added_as_baseline'] = True
+                    selected_mods.append(baseline_in_candidates)
+                    print(f"   📌 Added baseline mod: {baseline_mod['name']}")
+                else:
+                    # Baseline мод не в candidates - создаём минимальную запись
+                    baseline_entry = {
+                        'source_id': baseline_source_id,
+                        'name': baseline_mod['name'],
+                        'slug': baseline_mod.get('slug', ''),
+                        'capabilities': baseline_mod.get('capabilities', []),
+                        'tags': baseline_mod.get('tags', []),
+                        '_added_as_baseline': True
+                    }
+                    selected_mods.append(baseline_entry)
+                    print(f"   📌 Added baseline mod (not in candidates): {baseline_mod['name']}")
+        
+        # Логируем пропущенные моды (были в preselected, но не выбраны AI)
+        selected_slugs_set = {m.get('slug') for m in selected_mods}
+        skipped_mods = [m for m in trimmed_candidates if m.get('slug') not in selected_slugs_set]
+        if skipped_mods:
+            print(f"   📊 Skipped {len(skipped_mods)} mods from preselected (not chosen by AI):")
+            for mod in skipped_mods[:10]:  # Показываем первые 10
+                slug = mod.get('slug', 'unknown')
+                name = mod.get('name', 'unknown')
+                print(f"      - {name} ({slug})")
+            if len(skipped_mods) > 10:
+                print(f"      ... and {len(skipped_mods) - 10} more")
         
         # Автоматически добавляем критичные библиотеки если их нет
         selected_mods = ensure_libraries(selected_mods, trimmed_candidates)

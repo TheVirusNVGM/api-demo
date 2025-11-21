@@ -145,6 +145,8 @@ def check_subscription_tier(required_tier: str = None):
     def decorator(f):
         @wraps(f)
         def decorated_function(*args, **kwargs):
+            print(f"\n[REQUIRE_SUBSCRIPTION] {request.method} {request.path}")
+            print(f"   Authorization header: {'Present' if request.headers.get('Authorization') else 'Missing'}")
             try:
                 # 1. Извлекаем токен из заголовка
                 auth_header = request.headers.get('Authorization', '')

@@ -8,51 +8,69 @@ env/
 venv/
 ENV/
 build/
-develop-eggs/
 dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
 *.egg-info/
-.installed.cfg
-*.egg
+.pytest_cache/
 
-# Vercel
-.vercel
-
-# Environment
+# Secrets & Config
 .env
-.env.local
-.env.*.local
+.env.*
+!.env.example
+*.env
+config.py
+!config.example.py
+*_config.json
+credentials.json
+secrets.json
+*.key
+*.pem
 
-# IDEs
+# API Keys & Tokens
+*key*.txt
+*token*.txt
+*secret*.txt
+
+# Logs
+logs/
+*.log
+api/crash_doctor/logs/
+
+# Database dumps
+*.sql.backup
+*.db
+*.sqlite
+
+# IDE
 .vscode/
 .idea/
 *.swp
 *.swo
-*~
 
 # OS
 .DS_Store
 Thumbs.db
 
-# Logs
-*.log
+# Legacy & Archive
+legacy/
+_archive/
+старая*
+temp_scripts/
 
-# Testing
-.pytest_cache/
-.coverage
-htmlcov/
+# Documentation images are allowed
+!docs/images/*.png
+!docs/images/*.jpg
+!docs/images/*.svg
 
-# Sentence-transformers cache
-.cache/
-models/
+# Personal files
+РЕЗЮМЕ*.md
+portfolio*.html
+create_resume*.py
+generate_pdfs.py
 
-# Request logs
-logs/
+# Cloudflare & Deployment
+cloudflare-tunnel.yml
+vercel.json
+
+# Test files
+test_*.py
+debug_*.py
