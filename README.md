@@ -203,12 +203,9 @@ Authorization: Bearer <JWT>
 
 ## 📚 **Documentation**
 
-- **[Architecture Overview](docs/ARCHITECTURE.md)**: Detailed technical design with code examples
-- **[Crash Doctor Plan](docs/CRASH_DOCTOR_PLAN.md)**: Autonomous agent architecture
-- **[API Integration Guide](API_INTEGRATION.md)**: Frontend integration examples
-- **[Subscriptions & Limits](docs/SUBSCRIPTIONS_LIMITS_PLAN.md)**: Rate limiting design
-
 **Visual Architecture**: All architecture diagrams are available in [`docs/images/`](docs/images/)
+
+For detailed technical documentation, contact via Discord or email.
 
 ---
 

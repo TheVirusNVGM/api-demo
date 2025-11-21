@@ -34,6 +34,10 @@ secrets.json
 logs/
 *.log
 api/crash_doctor/logs/
+api/crash_doctor/logs/*
+debug.log
+latest.log
+crash-*.txt
 
 # Database dumps
 *.sql.backup
