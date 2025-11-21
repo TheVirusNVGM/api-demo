@@ -267,8 +267,7 @@ The code is shared publicly to demonstrate technical capabilities to potential e
 ## 👤 **Author**
 
 **Your Name**
-- LinkedIn: [Your Profile]
-- GitHub: [@YourUsername](https://github.com/YourUsername)
+- LinkedIn: [[Your Profile]](https://www.linkedin.com/in/maksim-rodza-5b6741338/)
 - Website: [astral-ai.online](https://astral-ai.online)
 
 ---
